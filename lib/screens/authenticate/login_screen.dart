@@ -38,7 +38,7 @@ class _LoginScreenState extends State<LoginScreen> {
           child: TextFormField(
             keyboardType: TextInputType.emailAddress,
             style: TextStyle(
-              color: Colors.white,
+              color: Colors.grey[700],
               fontFamily: 'OpenSans',
             ),
             decoration: InputDecoration(
@@ -46,7 +46,7 @@ class _LoginScreenState extends State<LoginScreen> {
               contentPadding: EdgeInsets.only(top: 14.0),
               prefixIcon: Icon(
                 Icons.email,
-                color: Colors.white,
+                color: Colors.grey,
               ),
               hintText: 'Enter your Email',
               hintStyle: kHintTextStyle,
@@ -78,7 +78,7 @@ class _LoginScreenState extends State<LoginScreen> {
             validator: (val) => val.length < 6 ? 'Enter a password 6+ chars long' : null,
             obscureText: true,
             style: TextStyle(
-              color: Colors.white,
+              color: Colors.grey[700],
               fontFamily: 'OpenSans',
             ),
             onChanged: (val) {
@@ -89,7 +89,7 @@ class _LoginScreenState extends State<LoginScreen> {
               contentPadding: EdgeInsets.only(top: 14.0),
               prefixIcon: Icon(
                 Icons.lock,
-                color: Colors.white,
+                color: Colors.grey,
               ),
               hintText: 'Enter your Password',
             ),
@@ -150,6 +150,7 @@ class _LoginScreenState extends State<LoginScreen> {
           if(_formKey.currentState.validate()){
             setState(() => loading = true);
             dynamic result = await _auth.signInWithEmailAndPassword(email, password);
+            print(result);
             if(result == null) {
               setState(() {
                 loading = false;
@@ -164,7 +165,7 @@ class _LoginScreenState extends State<LoginScreen> {
         ),
         color: Colors.white,
         child: Text(
-          'LOGIN',
+          'SIGN IN',
           style: TextStyle(
             color: Color(0xFF527DAA),
             letterSpacing: 1.5,
@@ -243,7 +244,7 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
-  Widget _buildSignupBtn() {
+  Widget _buildSignUpBtn() {
     return GestureDetector(
       onTap: () => widget.toggleView(),
       child: RichText(
@@ -332,7 +333,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             _buildLoginBtn(),
                             _buildSignInWithText(),
                             _buildSocialBtnRow(),
-                            _buildSignupBtn(),
+                            _buildSignUpBtn(),
                           ],
                         ),
                       )

@@ -255,6 +255,34 @@ class _RegisterState extends State<Register> {
     );
   }
 
+  Widget _buildSignInBtn() {
+    return GestureDetector(
+      onTap: () => widget.toggleView(),
+      child: RichText(
+        text: TextSpan(
+          children: [
+            TextSpan(
+              text: 'Do you have an Account? ',
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 18.0,
+                fontWeight: FontWeight.w400,
+              ),
+            ),
+            TextSpan(
+              text: 'Sign In',
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 18.0,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -317,6 +345,8 @@ class _RegisterState extends State<Register> {
                             _buildRememberMeCheckbox(),
                             SizedBox(height: 30.0),
                             _buildRegisterBtn(),
+                            SizedBox(height: 50.0),
+                            _buildSignInBtn()
                           ],
                         ),
                       )
