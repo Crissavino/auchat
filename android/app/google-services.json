@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "770529982609",
+    "firebase_url": "https://auchat-fa5e7.firebaseio.com",
+    "project_id": "auchat-fa5e7",
+    "storage_bucket": "auchat-fa5e7.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:770529982609:android:7fbc0f682a9d8b9ae0a730",
+        "android_client_info": {
+          "package_name": "com.flutter.au_chat"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "770529982609-8ggthookq7chqaebn3vkk83npu369ajv.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.flutter.au_chat",
+            "certificate_hash": "19b0f639e2d9bb98861d80288162bc3258928699"
+          }
+        },
+        {
+          "client_id": "770529982609-a4qmhj2ic4osl12j08juk8ab3fu0hi2n.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAQZKi1wH3amaIfBZh5Rk85QPz8q5XqTqg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "770529982609-a4qmhj2ic4osl12j08juk8ab3fu0hi2n.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "770529982609-8ps1s1dt0isp28t62ncckh8mld616ptv.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.flutter.auChat"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

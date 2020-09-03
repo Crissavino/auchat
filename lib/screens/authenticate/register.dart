@@ -5,7 +5,7 @@ import 'package:flutter/services.dart';
 
 class Register extends StatefulWidget {
   final Function toggleView;
-  Register({ this.toggleView });
+  Register({this.toggleView});
 
   @override
   _RegisterState createState() => _RegisterState();
@@ -38,7 +38,7 @@ class _RegisterState extends State<Register> {
           decoration: kBoxDecorationStyle,
           height: 60.0,
           child: TextFormField(
-            keyboardType: TextInputType.emailAddress,
+            keyboardType: TextInputType.name,
             style: TextStyle(
               color: Colors.grey[700],
               fontFamily: 'OpenSans',
@@ -116,7 +116,8 @@ class _RegisterState extends State<Register> {
           decoration: kBoxDecorationStyle,
           height: 60.0,
           child: TextFormField(
-            validator: (val) => val.length < 6 ? 'Enter a password 6+ chars long' : null,
+            validator: (val) =>
+                val.length < 6 ? 'Enter a password 6+ chars long' : null,
             obscureText: true,
             style: TextStyle(
               color: Colors.grey[700],
@@ -158,11 +159,11 @@ class _RegisterState extends State<Register> {
           height: 60.0,
           child: TextFormField(
             validator: (val) {
-              if(val.length < 6) {
+              if (val.length < 6) {
                 return 'Enter a password 6+ chars long';
               }
 
-              if(val != confirmPassword) {
+              if (val != confirmPassword) {
                 return 'Wrong!';
               }
 
@@ -225,10 +226,11 @@ class _RegisterState extends State<Register> {
       child: RaisedButton(
         elevation: 5.0,
         onPressed: () async {
-          if(_formKey.currentState.validate()){
+          if (_formKey.currentState.validate()) {
             setState(() => loading = true);
-            dynamic result = await _auth.registerWithEmailAndPassword(email, password);
-            if(result == null) {
+            dynamic result = await _auth.registerWithEmailAndPassword(
+                fullName, email, password);
+            if (result == null) {
               setState(() {
                 loading = false;
                 error = 'Could not sign up with those credentials';

@@ -32,6 +32,8 @@ dependencies:
   cloud_firestore: ^0.12.9+4
   provider: ^3.1.0
   flutter_spinkit: "^4.0.0"
+  http:
+  shared_preferences:
 
 dev_dependencies:
   flutter_test:
