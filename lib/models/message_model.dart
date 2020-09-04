@@ -92,7 +92,7 @@ final UserModel steven = UserModel(
 );
 
 // FAVORITE CONTACTS
-List<UserModel> favorites = [sam, steven, olivia, john, greg];
+// List<UserModel> favorites = [sam, steven, olivia, john, greg];
 
 // EXAMPLE CHATS ON HOME SCREEN
 // List<MessageModel> chats = [

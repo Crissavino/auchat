@@ -1,7 +1,5 @@
 import 'dart:convert';
 import 'package:au_chat/models/chat_room_model.dart';
-import 'package:au_chat/models/message_model.dart';
-import 'package:au_chat/screens/chats/chat_room.dart';
 import 'package:http/http.dart' as http;
 
 class ChatRoomService {

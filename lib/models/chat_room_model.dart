@@ -1,8 +1,5 @@
 import 'dart:convert';
 
-import 'package:au_chat/models/user_model.dart';
-import 'package:au_chat/models/message_model.dart';
-
 ChatRoomModel chatRoomModelFromJson(String str) =>
     ChatRoomModel.fromJson(json.decode(str));
 

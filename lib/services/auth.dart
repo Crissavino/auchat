@@ -1,6 +1,4 @@
-import 'package:au_chat/models/user.dart';
 import 'package:au_chat/models/user_model.dart';
-import 'package:au_chat/services/database.dart';
 import 'package:au_chat/services/node.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 

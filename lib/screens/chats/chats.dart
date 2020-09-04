@@ -1,9 +1,11 @@
 import 'package:au_chat/models/user_model.dart';
-import 'package:au_chat/screens/configurations/configurations.dart';
-import 'package:au_chat/screens/matches/matches.dart';
+import 'package:au_chat/widgets/configurations.dart';
+import 'package:au_chat/widgets/matches.dart';
 import 'package:au_chat/services/node.dart';
 import 'package:au_chat/utilities/constants.dart';
+import 'package:au_chat/widgets/favorite_contacts.dart';
 import 'package:au_chat/widgets/recent_chats.dart';
+import 'package:au_chat/widgets/upcoming_matches.dart';
 import 'package:flutter/material.dart';
 
 class Chats extends StatefulWidget {
@@ -117,7 +119,7 @@ class _ChatsState extends State<Chats> {
         return SafeArea(
           child: Column(
             children: [
-              // FavoriteContacts(),
+              UpcomingMatches(),
               RecentChats(user: widget.user),
             ],
           ),
@@ -136,7 +138,6 @@ class _ChatsState extends State<Chats> {
         return SafeArea(
           child: Column(
             children: [
-              // FavoriteContacts(),
               Configurations(user: widget.user),
             ],
           ),
@@ -146,7 +147,7 @@ class _ChatsState extends State<Chats> {
         return SafeArea(
           child: Column(
             children: [
-              // FavoriteContacts(),
+              UpcomingMatches(),
               RecentChats(user: widget.user),
             ],
           ),
