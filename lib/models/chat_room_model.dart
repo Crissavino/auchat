@@ -17,6 +17,7 @@ class ChatRoomModel {
   List<dynamic> messages;
   dynamic players;
   dynamic lastMessage;
+  String image;
 
   ChatRoomModel({
     this.name,
@@ -27,6 +28,7 @@ class ChatRoomModel {
     this.messages,
     this.players,
     this.lastMessage,
+    this.image,
   });
 
   factory ChatRoomModel.fromJson(Map<String, dynamic> json) => ChatRoomModel(
@@ -38,6 +40,7 @@ class ChatRoomModel {
         messages: json["messages"],
         players: json["players"],
         lastMessage: json["lastMessage"],
+        image: json["image"],
       );
 
   Map<String, dynamic> toJson() => {
@@ -49,6 +52,7 @@ class ChatRoomModel {
         "messages": messages,
         "players": players,
         "lastMessage": lastMessage,
+        "image": image,
       };
 }
 

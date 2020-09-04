@@ -1,5 +1,4 @@
 import 'package:au_chat/models/chat_room_model.dart';
-import 'package:au_chat/models/message_model.dart';
 import 'package:au_chat/models/user_model.dart';
 import 'package:flutter/material.dart';
 
@@ -20,16 +19,16 @@ class _ChatRoomState extends State<ChatRoom> {
           ? EdgeInsets.only(
               top: 8.0,
               bottom: 8.0,
-              left: 80.0,
+              left: 50.0,
             )
           : EdgeInsets.only(
               top: 8.0,
               bottom: 8.0,
             ),
       padding: EdgeInsets.symmetric(horizontal: 25.0, vertical: 15.0),
-      width: MediaQuery.of(context).size.width * 0.75,
+      width: MediaQuery.of(context).size.width * 0.85,
       decoration: BoxDecoration(
-        color: isMe ? Theme.of(context).accentColor : Color(0xFFFFEFEE),
+        color: Colors.grey[200],
         borderRadius: isMe
             ? BorderRadius.only(
                 topLeft: Radius.circular(15.0),
@@ -43,14 +42,30 @@ class _ChatRoomState extends State<ChatRoom> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          Text(
-            '10:26',
-            // message.time.toString(),
-            style: TextStyle(
-              color: Colors.blueGrey,
-              fontSize: 16.0,
-              fontWeight: FontWeight.w600,
-            ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                message['sender']['fullName'],
+                // message.time.toString(),
+                style: TextStyle(
+                  color: Colors.blueGrey,
+                  fontSize: 16.0,
+                  fontWeight: FontWeight.w600,
+                ),
+                overflow: TextOverflow.ellipsis,
+              ),
+              Text(
+                '10:26',
+                // message.time.toString(),
+                style: TextStyle(
+                  color: Colors.blueGrey,
+                  fontSize: 16.0,
+                  fontWeight: FontWeight.w600,
+                ),
+                overflow: TextOverflow.ellipsis,
+              ),
+            ],
           ),
           SizedBox(height: 8.0),
           Text(
@@ -68,19 +83,7 @@ class _ChatRoomState extends State<ChatRoom> {
       return msg;
     }
     return Row(
-      children: <Widget>[
-        msg,
-        IconButton(
-          icon: message['isLiked']
-              ? Icon(Icons.favorite)
-              : Icon(Icons.favorite_border),
-          iconSize: 30.0,
-          color: message['isLiked']
-              ? Theme.of(context).primaryColor
-              : Colors.blueGrey,
-          onPressed: () {},
-        )
-      ],
+      children: <Widget>[msg],
     );
   }
 
@@ -195,7 +198,7 @@ class _ChatRoomState extends State<ChatRoom> {
                       itemBuilder: (BuildContext context, int index) {
                         final dynamic message = widget.chatRoom.messages[index];
                         final bool isMe = message['sender']['firebaseId'] ==
-                            currentUser.firebaseId;
+                            widget.currentUser.firebaseId;
                         return _buildMessage(message, isMe);
                       },
                     ),

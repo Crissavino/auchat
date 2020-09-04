@@ -47,7 +47,7 @@ class RecentChats extends StatelessWidget {
                         ),
                         child: Container(
                           margin: EdgeInsets.only(
-                              top: 5.0, bottom: 5.0, right: 10.0, left: 10.0),
+                              top: 5.0, bottom: 2.0, right: 5.0, left: 5.0),
                           padding: EdgeInsets.symmetric(
                               horizontal: 20.0, vertical: 10.0),
                           decoration: BoxDecoration(
@@ -67,7 +67,8 @@ class RecentChats extends StatelessWidget {
                                 children: <Widget>[
                                   CircleAvatar(
                                     radius: 35.0,
-                                    backgroundColor: Colors.red,
+                                    backgroundImage: NetworkImage(
+                                        'https://img2.freepng.es/20180228/grw/kisspng-logo-football-photography-vector-football-5a97847a010f99.3151271415198792900044.jpg'),
                                   ),
                                   SizedBox(width: 10.0),
                                   Column(
