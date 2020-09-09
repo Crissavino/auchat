@@ -4,15 +4,10 @@ import 'package:au_chat/screens/chats/chat_room.dart';
 import 'package:au_chat/services/chat_room.dart';
 import 'package:flutter/material.dart';
 
-class RecentChats extends StatefulWidget {
+class RecentMatches extends StatelessWidget {
   final UserModel user;
-  RecentChats({this.user});
+  RecentMatches({this.user});
 
-  @override
-  _RecentChatsState createState() => _RecentChatsState();
-}
-
-class _RecentChatsState extends State<RecentChats> {
   final ChatRoomService chatRoomService = ChatRoomService();
 
   @override
@@ -39,7 +34,7 @@ class _RecentChatsState extends State<RecentChats> {
 
   FutureBuilder<List<ChatRoomModel>> _buildChatRoomList() {
     return FutureBuilder(
-      future: chatRoomService.getAllMyChatRooms(widget.user.firebaseId),
+      future: chatRoomService.getAllMyChatRooms(user.firebaseId),
       builder: (context, futureChats) {
         if (futureChats.hasData) {
           final List<ChatRoomModel> chats = futureChats.data;
@@ -66,15 +61,12 @@ class _RecentChatsState extends State<RecentChats> {
         MaterialPageRoute(
           builder: (_) => ChatRoom(
             chatRoom: chat,
-            currentUser: widget.user,
+            currentUser: user,
           ),
         ),
-      ).then((val) async {
-        setState(() {});
-      }),
+      ),
       child: Container(
-        margin:
-            EdgeInsets.only(top: 10.0, bottom: 2.0, right: 10.0, left: 10.0),
+        margin: EdgeInsets.only(top: 5.0, bottom: 2.0, right: 5.0, left: 5.0),
         padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
         decoration: BoxDecoration(
           color: chat.unreadMessages ? Color(0xFFFFEFEE) : Colors.white,
@@ -106,9 +98,7 @@ class _RecentChatsState extends State<RecentChats> {
                     Container(
                       width: MediaQuery.of(context).size.width * 0.45,
                       child: Text(
-                        (chat.lastMessage != null)
-                            ? chat.lastMessage['text']
-                            : '',
+                        (chat.lastMessage != null) ? chat.lastMessage.text : '',
                         style: TextStyle(
                           color: Colors.blueGrey,
                           fontSize: 15.0,

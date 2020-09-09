@@ -6,6 +6,7 @@ ChatRoomModel chatRoomModelFromJson(String str) =>
 String chatRoomModelToJson(ChatRoomModel data) => json.encode(data.toJson());
 
 class ChatRoomModel {
+  String id;
   String name;
   String description;
   bool isPinned;
@@ -15,8 +16,10 @@ class ChatRoomModel {
   dynamic players;
   dynamic lastMessage;
   String image;
+  dynamic owner;
 
   ChatRoomModel({
+    this.id,
     this.name,
     this.description,
     this.isPinned,
@@ -26,9 +29,11 @@ class ChatRoomModel {
     this.players,
     this.lastMessage,
     this.image,
+    this.owner,
   });
 
   factory ChatRoomModel.fromJson(Map<String, dynamic> json) => ChatRoomModel(
+        id: json["_id"],
         name: json["name"],
         description: json["description"],
         isPinned: json["isPinned"],
@@ -38,9 +43,11 @@ class ChatRoomModel {
         players: json["players"],
         lastMessage: json["lastMessage"],
         image: json["image"],
+        owner: json["owner"],
       );
 
   Map<String, dynamic> toJson() => {
+        "_id": id,
         "name": name,
         "description": description,
         "isPinned": isPinned,
@@ -50,6 +57,7 @@ class ChatRoomModel {
         "players": players,
         "lastMessage": lastMessage,
         "image": image,
+        "owner": owner,
       };
 }
 

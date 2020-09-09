@@ -2,47 +2,57 @@ import 'dart:convert';
 
 import 'package:au_chat/models/user_model.dart';
 
-MessageModel messageModelFromJson(String str) =>
-    MessageModel.fromJson(json.decode(str));
+MessagePlayerModel messagePlayerModelFromJson(String str) =>
+    MessagePlayerModel.fromJson(json.decode(str));
 
-String messageModelToJson(MessageModel data) => json.encode(data.toJson());
+String messagePlayerModelToJson(MessagePlayerModel data) =>
+    json.encode(data.toJson());
 
-class MessageModel {
+class MessagePlayerModel {
   UserModel sender;
-  String time;
+  dynamic message;
+  dynamic player;
+  dynamic chatRoom;
+  dynamic time;
   String text;
   bool isLiked;
   bool unread;
   String language;
-  dynamic chatRoom;
 
-  MessageModel({
+  MessagePlayerModel({
     this.sender,
+    this.message,
+    this.player,
+    this.chatRoom,
     this.time,
     this.text,
     this.isLiked,
     this.unread,
     this.language,
-    this.chatRoom,
   });
 
-  factory MessageModel.fromJson(Map<String, dynamic> json) => MessageModel(
+  factory MessagePlayerModel.fromJson(Map<String, dynamic> json) =>
+      MessagePlayerModel(
         sender: json["sender"],
+        message: json["message"],
+        player: json["player"],
+        chatRoom: json["chatRoom"],
         time: json["time"],
         text: json["text"],
         isLiked: json["isLiked"],
         unread: json["unread"],
         language: json["language"],
-        chatRoom: json["chatRoom"],
       );
 
   Map<String, dynamic> toJson() => {
         "sender": sender,
+        "message": message,
+        "player": player,
+        "chatRoom": chatRoom,
         "time": time,
         "text": text,
         "isLiked": isLiked,
         "unread": unread,
         "language": language,
-        "chatRoom": chatRoom,
       };
 }

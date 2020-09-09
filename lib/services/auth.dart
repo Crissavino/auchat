@@ -37,7 +37,8 @@ class AuthService {
       AuthResult result = await _auth.signInWithEmailAndPassword(
           email: email, password: password);
       FirebaseUser user = result.user;
-      return user;
+      UserModel nodeUser = await NodeService().getUserByFirebaseId(user.uid);
+      return nodeUser;
     } catch (error) {
       print(error.toString());
       return null;
@@ -52,7 +53,7 @@ class AuthService {
           email: email, password: password);
       FirebaseUser user = result.user;
       // create a new document for the user with the uid
-      await nodeService.createUser(user.uid, fullName);
+      await nodeService.createUser(user.uid, fullName, user.email);
 
       return _userFromFirebaseUser(user);
     } catch (error) {

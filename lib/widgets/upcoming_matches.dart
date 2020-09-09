@@ -17,21 +17,13 @@ class UpcomingMatches extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
                 Text(
-                  'Upcoming matches',
+                  'Proximos partidos',
                   style: TextStyle(
-                    color: Colors.blueGrey,
+                    color: Colors.white,
                     fontSize: 18.0,
                     fontWeight: FontWeight.bold,
                     letterSpacing: 1.0,
                   ),
-                ),
-                IconButton(
-                  icon: Icon(
-                    Icons.more_horiz,
-                  ),
-                  iconSize: 30.0,
-                  color: Colors.blueGrey,
-                  onPressed: () {},
                 ),
               ],
             ),
@@ -41,7 +33,7 @@ class UpcomingMatches extends StatelessWidget {
             child: ListView.builder(
               padding: EdgeInsets.only(left: 10.0),
               scrollDirection: Axis.horizontal,
-              itemCount: 10,
+              itemCount: 6,
               itemBuilder: (BuildContext context, int index) {
                 return GestureDetector(
                   // onTap: () => Navigator.push(
@@ -58,15 +50,14 @@ class UpcomingMatches extends StatelessWidget {
                     child: Column(
                       children: <Widget>[
                         CircleAvatar(
-                          radius: 35.0,
-                          backgroundImage: NetworkImage(
-                              'https://img2.freepng.es/20180228/grw/kisspng-logo-football-photography-vector-football-5a97847a010f99.3151271415198792900044.jpg'),
-                        ),
+                            radius: 35.0,
+                            backgroundImage:
+                                AssetImage('assets/matches/placeholder.png')),
                         SizedBox(height: 6.0),
                         Text(
                           'EDLP $index',
                           style: TextStyle(
-                            color: Colors.blueGrey,
+                            color: Colors.white,
                             fontSize: 16.0,
                             fontWeight: FontWeight.w600,
                           ),

@@ -1,14 +1,18 @@
 import 'package:au_chat/models/user_model.dart';
-import 'package:au_chat/widgets/configurations.dart';
-import 'package:au_chat/widgets/matches.dart';
+import 'package:au_chat/screens/chats/add_participants.dart';
+import 'package:au_chat/screens/chats/create_chat_room.dart';
+import 'package:au_chat/screens/configurations/configurations.dart';
+import 'package:au_chat/screens/matches/add_match_info.dart';
+import 'package:au_chat/screens/matches/match.dart';
+import 'package:au_chat/screens/matches/matches.dart';
 import 'package:au_chat/services/node.dart';
 import 'package:au_chat/utilities/constants.dart';
-import 'package:au_chat/widgets/favorite_contacts.dart';
 import 'package:au_chat/widgets/recent_chats.dart';
 import 'package:au_chat/widgets/upcoming_matches.dart';
 import 'package:flutter/material.dart';
 
 class Chats extends StatefulWidget {
+  static final String routeName = 'chats';
   final UserModel user;
   Chats({
     Key key,
@@ -39,49 +43,119 @@ class _ChatsState extends State<Chats> {
   }
 
   Widget _buildSearchTF() {
+    return Row(
+      children: [
+        Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: <Widget>[
+            Padding(
+              padding: (currentIndex == 2)
+                  ? const EdgeInsets.only(left: 20.0)
+                  : const EdgeInsets.only(left: 25.0, right: 25.0),
+              child: Container(
+                margin: EdgeInsets.only(top: 30.0),
+                decoration: BoxDecoration(
+                  color: Colors.grey[100],
+                  borderRadius: BorderRadius.circular(20.0),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black12,
+                      blurRadius: 6.0,
+                      offset: Offset(0, 2),
+                    ),
+                  ],
+                ),
+                width: (currentIndex == 2)
+                    ? MediaQuery.of(context).size.width * 0.9
+                    : MediaQuery.of(context).size.width * 0.7,
+                height: 30.0,
+                child: TextFormField(
+                  keyboardType: TextInputType.text,
+                  style: TextStyle(
+                    color: Colors.grey[700],
+                    fontFamily: 'OpenSans',
+                  ),
+                  decoration: InputDecoration(
+                    border: InputBorder.none,
+                    contentPadding: EdgeInsets.only(top: -3),
+                    prefixIcon: Icon(
+                      Icons.search,
+                      color: Colors.grey,
+                    ),
+                    hintText: 'Search',
+                    hintStyle: kHintTextStyle,
+                  ),
+                  onChanged: (val) {
+                    setState(() => search = val);
+                    print(search);
+                  },
+                ),
+              ),
+            ),
+          ],
+        ),
+        (currentIndex == 0)
+            ? _buildCreateGroupButton()
+            : (currentIndex == 1) ? _buildCreateMatchButton() : Container(),
+      ],
+    );
+  }
+
+  Column _buildCreateGroupButton() {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       crossAxisAlignment: CrossAxisAlignment.center,
-      children: <Widget>[
+      children: [
         Padding(
-          padding: const EdgeInsets.only(left: 25.0, right: 25.0),
-          child: Container(
-            margin: EdgeInsets.only(top: 30.0),
-            decoration: BoxDecoration(
-              color: Colors.grey[100],
-              borderRadius: BorderRadius.circular(20.0),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black12,
-                  blurRadius: 6.0,
-                  offset: Offset(0, 2),
+          padding: const EdgeInsets.only(top: 30.0),
+          child: IconButton(
+            icon: Icon(Icons.add_circle_outline),
+            iconSize: 30.0,
+            color: Colors.white,
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => AddParticipants(
+                    currentUser: widget.user,
+                  ),
                 ),
-              ],
-            ),
-            height: 30.0,
-            child: TextFormField(
-              keyboardType: TextInputType.text,
-              style: TextStyle(
-                color: Colors.grey[700],
-                fontFamily: 'OpenSans',
-              ),
-              decoration: InputDecoration(
-                border: InputBorder.none,
-                contentPadding: EdgeInsets.only(top: -3),
-                prefixIcon: Icon(
-                  Icons.search,
-                  color: Colors.grey,
-                ),
-                hintText: 'Search',
-                hintStyle: kHintTextStyle,
-              ),
-              onChanged: (val) {
-                setState(() => search = val);
-                print(search);
-              },
-            ),
+              ).then((val) async {
+                setState(() {});
+              });
+            },
           ),
-        ),
+        )
+      ],
+    );
+  }
+
+  Column _buildCreateMatchButton() {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(top: 30.0),
+          child: IconButton(
+            icon: Icon(Icons.add_circle_outline),
+            iconSize: 30.0,
+            color: Colors.white,
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => AddMatchInfo(
+                    currentUser: currentUser,
+                  ),
+                ),
+              ).then((val) async {
+                setState(() {});
+              });
+            },
+          ),
+        )
       ],
     );
   }
@@ -108,7 +182,22 @@ class _ChatsState extends State<Chats> {
           child: _buildSearchTF(),
         ),
       ),
-      body: _callPage(currentIndex),
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.centerLeft,
+            end: Alignment.centerRight,
+            colors: [
+              Colors.green[400],
+              Colors.green[500],
+              Colors.green[600],
+              Colors.green[700],
+            ],
+            stops: [0.1, 0.4, 0.7, 0.9],
+          ),
+        ),
+        child: _callPage(currentIndex),
+      ),
       bottomNavigationBar: _buildBottomNavigationBar(),
     );
   }
@@ -128,7 +217,6 @@ class _ChatsState extends State<Chats> {
         return SafeArea(
           child: Column(
             children: [
-              // FavoriteContacts(),
               Matches(user: widget.user),
             ],
           ),
@@ -157,6 +245,9 @@ class _ChatsState extends State<Chats> {
 
   Widget _buildBottomNavigationBar() {
     return BottomNavigationBar(
+      showUnselectedLabels: false,
+      selectedItemColor: Colors.green[400],
+      unselectedItemColor: Colors.green[900],
       currentIndex: currentIndex,
       onTap: (index) {
         setState(() {
@@ -165,15 +256,18 @@ class _ChatsState extends State<Chats> {
       },
       items: [
         BottomNavigationBarItem(
-          title: Text('Chat'),
+          // ignore: deprecated_member_use
+          title: Text('Chats'),
           icon: Icon(Icons.chat_bubble_outline_rounded),
         ),
         BottomNavigationBarItem(
-          title: Text('Matches'),
+          // ignore: deprecated_member_use
+          title: Text('Partidos'),
           icon: Icon(Icons.sports_soccer),
         ),
         BottomNavigationBarItem(
-          title: Text('Configurations'),
+          // ignore: deprecated_member_use
+          title: Text('Configuracion'),
           icon: Icon(Icons.brightness_5),
         ),
       ],
