@@ -24,9 +24,9 @@ class _ChatRoomState extends State<ChatRoom> {
   final TextEditingController _textController = TextEditingController();
   final MessageBloc messageBloc = MessageBloc();
   final ScrollController listScrollController = ScrollController();
-  final FocusNode focusNode = FocusNode();
-  List<DeviceMessageModel> listMessage;
-  final ChatRoomService _chatRoomService = ChatRoomService();
+
+  /// Will used to access the Animated list
+  final GlobalKey<AnimatedListState> listKey = GlobalKey<AnimatedListState>();
 
   @override
   void initState() {
@@ -169,7 +169,7 @@ class _ChatRoomState extends State<ChatRoom> {
                 if (listScrollController.hasClients) {
                   listScrollController.animateTo(
                     0.0,
-                    duration: Duration(milliseconds: 1300),
+                    duration: Duration(seconds: 5),
                     curve: Curves.easeIn,
                   );
                 }
@@ -235,7 +235,7 @@ class _ChatRoomState extends State<ChatRoom> {
                 ),
                 child: ClipRRect(
                   borderRadius: screenBorders,
-                  child: _buildStreamBuilder2(),
+                  child: _buildStreamBuilder(),
                 ),
               ),
             ),
@@ -246,19 +246,7 @@ class _ChatRoomState extends State<ChatRoom> {
     );
   }
 
-  // _buildStreamBuilder(){
-  //   return StreamBuilder(
-  //     stream: messageBloc.messageStream ,
-  //     initialData: initialData ,
-  //     builder: (BuildContext context, AsyncSnapshot snapshot){
-  //       return Container(
-  //         child: child,
-  //       );
-  //     },
-  //   ),
-  // }
-
-  Widget _buildStreamBuilder2() {
+  Widget _buildStreamBuilder() {
     return FutureBuilder(
       future: ChatRoomService()
           .getAllChatRoomMessages(widget.chatRoom.id, widget.currentUser.id),
@@ -282,11 +270,9 @@ class _ChatRoomState extends State<ChatRoom> {
                   reverse: true,
                   padding: EdgeInsets.only(top: 15.0),
                   itemCount: snapshot.data.length,
-                  itemBuilder: (context, index) => _buildItem(
-                    index,
-                    (snapshot.data[index]),
-                  ),
                   controller: listScrollController,
+                  itemBuilder: (context, index) =>
+                      _buildItem(index, (snapshot.data[index])),
                 ),
               );
             },
@@ -294,6 +280,19 @@ class _ChatRoomState extends State<ChatRoom> {
         }
       },
     );
+  }
+
+  _buildItem(int index, message, {ScrollController controller}) {
+    if (!(message is String)) {
+      final bool isMe =
+          message.sender['firebaseId'] == widget.currentUser.firebaseId;
+      return _buildMessage(message, isMe);
+      // return FadeInMessage(0.5, _buildMessage(message, isMe));
+    } else {
+      return Center(
+        child: Text(''),
+      );
+    }
   }
 
   PopupMenuButton<String> _buildPopupMenu() {
@@ -315,17 +314,5 @@ class _ChatRoomState extends State<ChatRoom> {
         }).toList();
       },
     );
-  }
-
-  _buildItem(int index, message, {ScrollController controller}) {
-    if (!(message is String)) {
-      final bool isMe =
-          message.sender['firebaseId'] == widget.currentUser.firebaseId;
-      return FadeInMessage(0.5, _buildMessage(message, isMe));
-    } else {
-      return Center(
-        child: Text(''),
-      );
-    }
   }
 }

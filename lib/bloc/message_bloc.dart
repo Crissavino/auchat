@@ -3,6 +3,7 @@ import 'package:au_chat/models/chat_room_model.dart';
 import 'package:au_chat/models/device_message_model.dart';
 import 'package:au_chat/models/message_model.dart';
 import 'package:au_chat/models/user_model.dart';
+import 'package:au_chat/providers/message_provider.dart';
 import 'package:au_chat/services/chat_room.dart';
 import 'package:au_chat/services/node.dart';
 
@@ -52,7 +53,7 @@ class MessageBloc {
   }
 
   addMessage(MessageModel message, UserModel currentUser) async {
-    await ChatRoomService().newMessage(message, currentUser);
+    await MessageProvider().newMessage(message, currentUser);
     getMessages(message.chatRoom.id, currentUser);
   }
 }
