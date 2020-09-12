@@ -4,7 +4,9 @@ import 'package:au_chat/models/device_message_model.dart';
 import 'package:au_chat/models/message_model.dart';
 import 'package:au_chat/models/user_model.dart';
 import 'package:au_chat/screens/chats/search_player.dart';
+import 'package:au_chat/services/chat_room.dart';
 import 'package:au_chat/utilities/constants.dart';
+import 'package:au_chat/widgets/fade_in_message.dart';
 import 'package:flutter/material.dart';
 
 class ChatRoom extends StatefulWidget {
@@ -19,7 +21,12 @@ class ChatRoom extends StatefulWidget {
 
 class _ChatRoomState extends State<ChatRoom> {
   String textMessage;
-  final _textController = TextEditingController();
+  final TextEditingController _textController = TextEditingController();
+  final MessageBloc messageBloc = MessageBloc();
+  final ScrollController listScrollController = ScrollController();
+  final FocusNode focusNode = FocusNode();
+  List<DeviceMessageModel> listMessage;
+  final ChatRoomService _chatRoomService = ChatRoomService();
 
   @override
   void initState() {
@@ -116,7 +123,7 @@ class _ChatRoomState extends State<ChatRoom> {
     );
   }
 
-  _buildMessageComposer(MessageBloc messageBloc) {
+  _buildMessageComposer() {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 8.0),
       height: 70.0,
@@ -146,7 +153,9 @@ class _ChatRoomState extends State<ChatRoom> {
             iconSize: 25.0,
             color: Colors.green[400],
             onPressed: () {
-              if (textMessage != null || textMessage.isNotEmpty) {
+              if (textMessage != null ||
+                  textMessage.isNotEmpty ||
+                  textMessage.trim() != null) {
                 final message = MessageModel();
                 message.sender = widget.currentUser;
                 message.time = DateTime.now().toIso8601String();
@@ -156,9 +165,18 @@ class _ChatRoomState extends State<ChatRoom> {
                 message.language = 'es';
                 message.chatRoom = widget.chatRoom;
 
-                messageBloc.addMessage(message, widget.currentUser.firebaseId);
+                messageBloc.addMessage(message, widget.currentUser);
+                if (listScrollController.hasClients) {
+                  listScrollController.animateTo(
+                    0.0,
+                    duration: Duration(milliseconds: 1300),
+                    curve: Curves.easeIn,
+                  );
+                }
 
                 _textController.clear();
+              } else {
+                // Fluttertoast.showToast(msg: 'Nothing to send');
               }
             },
           ),
@@ -186,10 +204,6 @@ class _ChatRoomState extends State<ChatRoom> {
 
   @override
   Widget build(BuildContext context) {
-    final messageBloc =
-        MessageBloc(user: widget.currentUser, chatRoom: widget.chatRoom);
-    messageBloc.getMessages(widget.chatRoom.id, widget.currentUser.firebaseId);
-
     return Container(
       decoration: horizontalGradient,
       child: Scaffold(
@@ -208,92 +222,110 @@ class _ChatRoomState extends State<ChatRoom> {
             decoration: horizontalGradient,
           ),
           actions: <Widget>[
-            PopupMenuButton<String>(
-              onSelected: choiceAction,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(15.0),
-              ),
-              icon: Icon(Icons.more_horiz),
-              padding: EdgeInsets.only(
-                right: 10.0,
-              ),
-              itemBuilder: (BuildContext context) {
-                return chatRoomMenuChoices.map((String choice) {
-                  return PopupMenuItem(
-                    value: choice,
-                    child: Text(choice),
-                  );
-                }).toList();
-              },
-            ),
+            _buildPopupMenu(),
           ],
         ),
-        body: GestureDetector(
-          onTap: () => FocusScope.of(context).unfocus(),
-          child: Column(
-            children: <Widget>[
-              Expanded(
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(30.0),
-                      topRight: Radius.circular(30.0),
-                    ),
-                  ),
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(30.0),
-                      topRight: Radius.circular(30.0),
-                    ),
-                    child: StreamBuilder(
-                      stream: messageBloc.messageStream,
-                      initialData: widget.chatRoom.messages,
-                      builder: (BuildContext context, AsyncSnapshot snapshot) {
-                        if (!snapshot.hasData) {
-                          return Center(
-                            child: CircularProgressIndicator(),
-                          );
-                        }
-
-                        final messages = snapshot.data;
-
-                        if (messages.length == 0) {
-                          return Center(
-                            child: Text(''),
-                          );
-                        }
-
-                        return ListView.builder(
-                          reverse: true,
-                          padding: EdgeInsets.only(top: 15.0),
-                          // itemCount: messages.length,
-                          itemCount: messages.length,
-                          itemBuilder: (BuildContext context, int index) {
-                            if (!(messages[index] is String)) {
-                              final DeviceMessageModel message =
-                                  messages[index];
-
-                              final bool isMe = message.sender['firebaseId'] ==
-                                  widget.currentUser.firebaseId;
-                              return _buildMessage(message, isMe);
-                            } else {
-                              return Center(
-                                child: Text(''),
-                              );
-                            }
-                          },
-                        );
-                      },
-                    ),
-                  ),
+        body: Column(
+          children: <Widget>[
+            Expanded(
+              child: Container(
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: screenBorders,
+                ),
+                child: ClipRRect(
+                  borderRadius: screenBorders,
+                  child: _buildStreamBuilder2(),
                 ),
               ),
-              _buildMessageComposer(messageBloc),
-            ],
-          ),
+            ),
+            _buildMessageComposer(),
+          ],
         ),
       ),
     );
+  }
+
+  // _buildStreamBuilder(){
+  //   return StreamBuilder(
+  //     stream: messageBloc.messageStream ,
+  //     initialData: initialData ,
+  //     builder: (BuildContext context, AsyncSnapshot snapshot){
+  //       return Container(
+  //         child: child,
+  //       );
+  //     },
+  //   ),
+  // }
+
+  Widget _buildStreamBuilder2() {
+    return FutureBuilder(
+      future: ChatRoomService()
+          .getAllChatRoomMessages(widget.chatRoom.id, widget.currentUser.id),
+      builder: (BuildContext context, AsyncSnapshot snapshot) {
+        if (!snapshot.hasData) {
+          return Center(
+            child: CircularProgressIndicator(
+              valueColor: AlwaysStoppedAnimation<Color>(Colors.green[400]),
+            ),
+          );
+        } else {
+          final messages = snapshot.data;
+
+          return StreamBuilder(
+            stream: messageBloc.messageStream,
+            initialData: messages,
+            builder: (BuildContext context, AsyncSnapshot snapshot) {
+              return GestureDetector(
+                onTap: () => FocusScope.of(context).unfocus(),
+                child: ListView.builder(
+                  reverse: true,
+                  padding: EdgeInsets.only(top: 15.0),
+                  itemCount: snapshot.data.length,
+                  itemBuilder: (context, index) => _buildItem(
+                    index,
+                    (snapshot.data[index]),
+                  ),
+                  controller: listScrollController,
+                ),
+              );
+            },
+          );
+        }
+      },
+    );
+  }
+
+  PopupMenuButton<String> _buildPopupMenu() {
+    return PopupMenuButton<String>(
+      onSelected: choiceAction,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(15.0),
+      ),
+      icon: Icon(Icons.more_horiz),
+      padding: EdgeInsets.only(
+        right: 10.0,
+      ),
+      itemBuilder: (BuildContext context) {
+        return chatRoomMenuChoices.map((String choice) {
+          return PopupMenuItem(
+            value: choice,
+            child: Text(choice),
+          );
+        }).toList();
+      },
+    );
+  }
+
+  _buildItem(int index, message, {ScrollController controller}) {
+    if (!(message is String)) {
+      final bool isMe =
+          message.sender['firebaseId'] == widget.currentUser.firebaseId;
+      return FadeInMessage(0.5, _buildMessage(message, isMe));
+    } else {
+      return Center(
+        child: Text(''),
+      );
+    }
   }
 }

@@ -2,6 +2,7 @@ import 'package:au_chat/bloc/user_bloc.dart';
 import 'package:au_chat/models/user_model.dart';
 import 'package:au_chat/screens/chats/create_chat_room.dart';
 import 'package:au_chat/utilities/constants.dart';
+import 'package:au_chat/utilities/slide_bottom_route.dart';
 import 'package:au_chat/widgets/search_player.dart';
 import 'package:flutter/material.dart';
 
@@ -109,11 +110,12 @@ class _AddParticipantsState extends State<AddParticipants> {
                         : () {
                             Navigator.push(
                               context,
-                              MaterialPageRoute(
-                                builder: (_) => CreateChatRoom(
-                                    currentUser: widget.currentUser,
-                                    usersToAddToGroup: usersToAdd,
-                                    userBloc: userBloc),
+                              SlideBottomRoute(
+                                page: CreateChatRoom(
+                                  currentUser: widget.currentUser,
+                                  usersToAddToGroup: usersToAdd,
+                                  userBloc: userBloc,
+                                ),
                               ),
                             ).then((val) async {
                               setState(() {});

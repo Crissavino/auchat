@@ -2,6 +2,7 @@ import 'package:au_chat/models/chat_room_model.dart';
 import 'package:au_chat/models/user_model.dart';
 import 'package:au_chat/screens/chats/chat_room.dart';
 import 'package:au_chat/services/chat_room.dart';
+import 'package:au_chat/utilities/slide_bottom_route.dart';
 import 'package:flutter/material.dart';
 
 class RecentChats extends StatefulWidget {
@@ -63,15 +64,17 @@ class _RecentChatsState extends State<RecentChats> {
     return GestureDetector(
       onTap: () => Navigator.push(
         context,
-        MaterialPageRoute(
-          builder: (_) => ChatRoom(
+        SlideBottomRoute(
+          page: ChatRoom(
             chatRoom: chat,
             currentUser: widget.user,
           ),
         ),
-      ).then((val) async {
-        setState(() {});
-      }),
+      ).then(
+        (val) async {
+          setState(() {});
+        },
+      ),
       child: Container(
         margin:
             EdgeInsets.only(top: 10.0, bottom: 2.0, right: 10.0, left: 10.0),

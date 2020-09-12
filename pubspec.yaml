@@ -34,6 +34,7 @@ dependencies:
   flutter_spinkit: "^4.0.0"
   http:
   shared_preferences:
+  simple_animations:
 
 dev_dependencies:
   flutter_test:

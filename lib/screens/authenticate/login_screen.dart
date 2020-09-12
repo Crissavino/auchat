@@ -75,7 +75,8 @@ class _LoginScreenState extends State<LoginScreen> {
           decoration: kBoxDecorationStyle,
           height: 60.0,
           child: TextFormField(
-            validator: (val) => val.length < 6 ? 'Enter a password 6+ chars long' : null,
+            validator: (val) =>
+                val.length < 6 ? 'Enter a password 6+ chars long' : null,
             obscureText: true,
             style: TextStyle(
               color: Colors.grey[700],
@@ -147,11 +148,11 @@ class _LoginScreenState extends State<LoginScreen> {
       child: RaisedButton(
         elevation: 5.0,
         onPressed: () async {
-          if(_formKey.currentState.validate()){
+          if (_formKey.currentState.validate()) {
             setState(() => loading = true);
-            dynamic result = await _auth.signInWithEmailAndPassword(email, password);
-            print(result);
-            if(result == null) {
+            dynamic result =
+                await _auth.signInWithEmailAndPassword(email, password);
+            if (result == null) {
               setState(() {
                 loading = false;
                 error = 'Could not sign in with those credentials';

@@ -49,12 +49,30 @@ class ChatRoomService {
     return messages;
   }
 
-  Future<void> newMessage(MessageModel message, UserModel user) async {
+  Future<List<DeviceMessageModel>> newMessage(
+      MessageModel message, UserModel user) async {
     final url = '$_url/createMessages?firebaseId=${user.firebaseId}';
 
-    await http.post(url,
+    final resp = await http.post(url,
         headers: {"Content-Type": "application/json"},
         body: messageModelToJson(message));
+
+    final Map<String, dynamic> decodedData = json.decode(resp.body);
+
+    if (decodedData == null) return null;
+    if (decodedData['success'] != true) return null;
+
+    final myLasDeviceMessageFromNode = decodedData['myLastDeviceMessage'];
+
+    List<DeviceMessageModel> deviceMessages = List();
+    myLasDeviceMessageFromNode.forEach((value) {
+      final message = DeviceMessageModel.fromJson(value);
+      deviceMessages.add(message);
+    });
+
+    print(deviceMessages);
+
+    return deviceMessages;
   }
 
   Future<bool> createChatRoom(UserModel currentUser, String groupName,

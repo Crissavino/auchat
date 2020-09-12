@@ -7,6 +7,7 @@ import 'package:au_chat/screens/matches/match.dart';
 import 'package:au_chat/screens/matches/matches.dart';
 import 'package:au_chat/services/node.dart';
 import 'package:au_chat/utilities/constants.dart';
+import 'package:au_chat/utilities/slide_bottom_route.dart';
 import 'package:au_chat/widgets/recent_chats.dart';
 import 'package:au_chat/widgets/upcoming_matches.dart';
 import 'package:flutter/material.dart';
@@ -31,16 +32,17 @@ class _ChatsState extends State<Chats> {
   @override
   void initState() {
     super.initState();
+    currentUser = widget.user;
 
-    getCurrentUser();
+    // getCurrentUser();
   }
 
-  Future<UserModel> getCurrentUser() async {
-    String firebaseId = widget.user.firebaseId;
+  // Future<UserModel> getCurrentUser() async {
+  //   String firebaseId = widget.user.firebaseId;
 
-    UserModel currentUser = await NodeService().getUserByFirebaseId(firebaseId);
-    return currentUser;
-  }
+  //   UserModel currentUser = await NodeService().getUserByFirebaseId(firebaseId);
+  //   return currentUser;
+  // }
 
   Widget _buildSearchTF() {
     return Row(
@@ -88,7 +90,6 @@ class _ChatsState extends State<Chats> {
                   ),
                   onChanged: (val) {
                     setState(() => search = val);
-                    print(search);
                   },
                 ),
               ),
@@ -116,9 +117,9 @@ class _ChatsState extends State<Chats> {
             onPressed: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(
-                  builder: (_) => AddParticipants(
-                    currentUser: widget.user,
+                SlideBottomRoute(
+                  page: AddParticipants(
+                    currentUser: currentUser,
                   ),
                 ),
               ).then((val) async {
@@ -145,8 +146,8 @@ class _ChatsState extends State<Chats> {
             onPressed: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(
-                  builder: (_) => AddMatchInfo(
+                SlideBottomRoute(
+                  page: AddMatchInfo(
                     currentUser: currentUser,
                   ),
                 ),
@@ -209,7 +210,7 @@ class _ChatsState extends State<Chats> {
           child: Column(
             children: [
               UpcomingMatches(),
-              RecentChats(user: widget.user),
+              RecentChats(user: currentUser),
             ],
           ),
         );
@@ -217,7 +218,7 @@ class _ChatsState extends State<Chats> {
         return SafeArea(
           child: Column(
             children: [
-              Matches(user: widget.user),
+              Matches(user: currentUser),
             ],
           ),
         );
@@ -226,7 +227,7 @@ class _ChatsState extends State<Chats> {
         return SafeArea(
           child: Column(
             children: [
-              Configurations(user: widget.user),
+              Configurations(user: currentUser),
             ],
           ),
         );
@@ -236,7 +237,7 @@ class _ChatsState extends State<Chats> {
           child: Column(
             children: [
               UpcomingMatches(),
-              RecentChats(user: widget.user),
+              RecentChats(user: currentUser),
             ],
           ),
         );

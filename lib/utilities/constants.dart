@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-const NGROK_HTTP = 'https://31f259d6ad9c.ngrok.io';
+const NGROK_HTTP = 'https://f4cbcbaba509.ngrok.io';
 // const NGROK_HTTP = 'http://localhost:4000';
 // ngrok hhtp 4000
 
@@ -37,6 +37,11 @@ const textInputDecoration = InputDecoration(
   focusedBorder: OutlineInputBorder(
     borderSide: BorderSide(color: Colors.pink, width: 2.0),
   ),
+);
+
+final screenBorders = BorderRadius.only(
+  topLeft: Radius.circular(30.0),
+  topRight: Radius.circular(30.0),
 );
 
 final horizontalGradient = BoxDecoration(
