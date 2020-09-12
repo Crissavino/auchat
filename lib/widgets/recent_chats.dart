@@ -1,3 +1,4 @@
+import 'package:au_chat/bloc/message_bloc.dart';
 import 'package:au_chat/models/chat_room_model.dart';
 import 'package:au_chat/models/user_model.dart';
 import 'package:au_chat/screens/chats/chat_room.dart';
@@ -15,6 +16,7 @@ class RecentChats extends StatefulWidget {
 
 class _RecentChatsState extends State<RecentChats> {
   final ChatRoomService chatRoomService = ChatRoomService();
+  MessageBloc messageBloc = MessageBloc();
 
   @override
   Widget build(BuildContext context) {
@@ -38,7 +40,35 @@ class _RecentChatsState extends State<RecentChats> {
     );
   }
 
-  FutureBuilder<List<ChatRoomModel>> _buildChatRoomList() {
+  _buildChatRoomList() {
+    return FutureBuilder(
+      future: chatRoomService.getAllMyChatRooms(widget.user.firebaseId),
+      builder: (BuildContext context, AsyncSnapshot futureChats) {
+        if (futureChats.hasData) {
+          final List<ChatRoomModel> chats = futureChats.data;
+          return StreamBuilder(
+            stream: messageBloc.chatRoomStream,
+            initialData: chats,
+            builder: (BuildContext context, AsyncSnapshot snapshot) {
+              return ListView.builder(
+                itemCount: snapshot.data.length,
+                itemBuilder: (BuildContext context, int index) {
+                  final ChatRoomModel chat = chats[index];
+                  return _buildChatRoomRow(context, chat);
+                },
+              );
+            },
+          );
+        } else {
+          return Center(
+            child: CircularProgressIndicator(),
+          );
+        }
+      },
+    );
+  }
+
+  FutureBuilder<List<ChatRoomModel>> _buildChatRoomList2() {
     return FutureBuilder(
       future: chatRoomService.getAllMyChatRooms(widget.user.firebaseId),
       builder: (context, futureChats) {

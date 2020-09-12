@@ -24,15 +24,11 @@ class MessageProvider {
     final myLasDeviceMessagesFromNode =
         decodedData['response']['allMyDeviceMessages'];
 
-    // return DeviceMessageModel.fromJson(myLasDeviceMessageFromNode);
-
     List<DeviceMessageModel> deviceMessages = List();
     myLasDeviceMessagesFromNode.forEach((value) {
       final message = DeviceMessageModel.fromJson(value);
       deviceMessages.add(message);
     });
-
-    print(deviceMessages);
 
     return deviceMessages;
   }

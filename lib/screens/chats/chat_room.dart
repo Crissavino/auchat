@@ -153,9 +153,9 @@ class _ChatRoomState extends State<ChatRoom> {
             iconSize: 25.0,
             color: Colors.green[400],
             onPressed: () {
-              if (textMessage != null ||
-                  textMessage.isNotEmpty ||
-                  textMessage.trim() != null) {
+              bool blank = textMessage?.trim()?.isEmpty ?? true;
+              if (!blank) {
+                print('textMessage es ==== ${textMessage.isEmpty}');
                 final message = MessageModel();
                 message.sender = widget.currentUser;
                 message.time = DateTime.now().toIso8601String();

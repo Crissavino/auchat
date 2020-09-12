@@ -55,5 +55,6 @@ class MessageBloc {
   addMessage(MessageModel message, UserModel currentUser) async {
     await MessageProvider().newMessage(message, currentUser);
     getMessages(message.chatRoom.id, currentUser);
+    getAllMyChatRooms(currentUser.firebaseId);
   }
 }
