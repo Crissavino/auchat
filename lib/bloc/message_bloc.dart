@@ -26,6 +26,12 @@ class MessageBloc {
   Stream<List<DeviceMessageModel>> get messageStream =>
       _messageController.stream;
 
+  Stream<List<DeviceMessageModel>> getMessagesStream(
+      String chatRoomId, UserModel currentUser) async* {
+    yield await ChatRoomService()
+        .getAllChatRoomMessages(chatRoomId, currentUser.id);
+  }
+
   // final _messageController = StreamController<DeviceMessageModel>.broadcast();
 
   // Stream<DeviceMessageModel> get messageStream => _messageController.stream;

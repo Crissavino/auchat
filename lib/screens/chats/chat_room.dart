@@ -155,7 +155,6 @@ class _ChatRoomState extends State<ChatRoom> {
             onPressed: () {
               bool blank = textMessage?.trim()?.isEmpty ?? true;
               if (!blank) {
-                print('textMessage es ==== ${textMessage.isEmpty}');
                 final message = MessageModel();
                 message.sender = widget.currentUser;
                 message.time = DateTime.now().toIso8601String();
@@ -247,23 +246,52 @@ class _ChatRoomState extends State<ChatRoom> {
   }
 
   Widget _buildStreamBuilder() {
+    return StreamBuilder(
+        stream: messageBloc.getMessagesStream(
+            widget.chatRoom.id, widget.currentUser),
+        builder: (BuildContext context, AsyncSnapshot snapshot) {
+          print(snapshot.hasData);
+
+          if (!snapshot.hasData) {
+            return Center(
+              child: CircularProgressIndicator(
+                valueColor: AlwaysStoppedAnimation<Color>(Colors.green[400]),
+              ),
+            );
+          } else {
+            return GestureDetector(
+              onTap: () => FocusScope.of(context).unfocus(),
+              child: ListView.builder(
+                reverse: true,
+                padding: EdgeInsets.only(top: 15.0),
+                itemCount: snapshot.data.length,
+                controller: listScrollController,
+                itemBuilder: (BuildContext context, int index) =>
+                    _buildItem(index, (snapshot.data[index])),
+              ),
+            );
+          }
+        });
+
     return FutureBuilder(
       future: ChatRoomService()
           .getAllChatRoomMessages(widget.chatRoom.id, widget.currentUser.id),
-      builder: (BuildContext context, AsyncSnapshot snapshot) {
-        if (!snapshot.hasData) {
+      builder: (BuildContext context, AsyncSnapshot futureMessage) {
+        if (!futureMessage.hasData) {
           return Center(
             child: CircularProgressIndicator(
               valueColor: AlwaysStoppedAnimation<Color>(Colors.green[400]),
             ),
           );
         } else {
-          final messages = snapshot.data;
+          print('snapshot.data ${futureMessage.data.length}');
+          final messages = futureMessage.data;
 
           return StreamBuilder(
             stream: messageBloc.messageStream,
             initialData: messages,
             builder: (BuildContext context, AsyncSnapshot snapshot) {
+              print('snapshot.data ${snapshot.data.length}');
               return GestureDetector(
                 onTap: () => FocusScope.of(context).unfocus(),
                 child: ListView.builder(
@@ -271,7 +299,45 @@ class _ChatRoomState extends State<ChatRoom> {
                   padding: EdgeInsets.only(top: 15.0),
                   itemCount: snapshot.data.length,
                   controller: listScrollController,
-                  itemBuilder: (context, index) =>
+                  itemBuilder: (BuildContext context, int index) =>
+                      _buildItem(index, (snapshot.data[index])),
+                ),
+              );
+            },
+          );
+        }
+      },
+    );
+  }
+
+  Widget _buildStreamBuilder2() {
+    return FutureBuilder(
+      future: ChatRoomService()
+          .getAllChatRoomMessages(widget.chatRoom.id, widget.currentUser.id),
+      builder: (BuildContext context, AsyncSnapshot futureMessage) {
+        if (!futureMessage.hasData) {
+          return Center(
+            child: CircularProgressIndicator(
+              valueColor: AlwaysStoppedAnimation<Color>(Colors.green[400]),
+            ),
+          );
+        } else {
+          print('snapshot.data ${futureMessage.data.length}');
+          final messages = futureMessage.data;
+
+          return StreamBuilder(
+            stream: messageBloc.messageStream,
+            initialData: messages,
+            builder: (BuildContext context, AsyncSnapshot snapshot) {
+              print('snapshot.data ${snapshot.data.length}');
+              return GestureDetector(
+                onTap: () => FocusScope.of(context).unfocus(),
+                child: ListView.builder(
+                  reverse: true,
+                  padding: EdgeInsets.only(top: 15.0),
+                  itemCount: snapshot.data.length,
+                  controller: listScrollController,
+                  itemBuilder: (BuildContext context, int index) =>
                       _buildItem(index, (snapshot.data[index])),
                 ),
               );

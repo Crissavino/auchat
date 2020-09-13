@@ -46,12 +46,10 @@ class _RecentChatsState extends State<RecentChats> {
       builder: (BuildContext context, AsyncSnapshot futureChats) {
         if (futureChats.hasData) {
           final List<ChatRoomModel> chats = futureChats.data;
-          print('chats ==== $chats');
           return StreamBuilder(
             stream: messageBloc.chatRoomStream,
             initialData: chats,
             builder: (BuildContext context, AsyncSnapshot snapshot) {
-              print('snapshot.data ==== ${snapshot.data}');
               return ListView.builder(
                 itemCount: (snapshot.data != null) ? snapshot.data.length : 0,
                 itemBuilder: (BuildContext context, int index) {
