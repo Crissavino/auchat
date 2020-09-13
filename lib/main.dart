@@ -13,7 +13,9 @@ void main() async {
 
   UserModel nodeUser;
   await AuthService().user.first.then((UserModel user) async {
-    nodeUser = await NodeService().getUserByFirebaseId(user.firebaseId);
+    if (user != null) {
+      nodeUser = await NodeService().getUserByFirebaseId(user.firebaseId);
+    }
   });
 
   runApp(MyApp(

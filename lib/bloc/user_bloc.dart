@@ -26,7 +26,7 @@ class UserBloc {
 
   usersToRemoveStream(UserModel user) {
     usersToAddToGroup.removeWhere(
-        (UserModel streamUser) => streamUser.fullName == user.fullName);
+        (UserModel streamUser) => streamUser.firebaseId == user.firebaseId);
     _usersController.sink.add(usersToAddToGroup);
   }
 

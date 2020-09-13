@@ -41,8 +41,8 @@ class _PlayerRowState extends State<PlayerRow> {
           }
           if (usersToAdd != null && usersToAdd.isNotEmpty) {
             widget.isAlreadyHere = usersToAdd
-                .where(
-                    (UserModel user) => user.fullName == widget.user.fullName)
+                .where((UserModel user) =>
+                    user.firebaseId == widget.user.firebaseId)
                 .isNotEmpty;
           }
           return Container(
@@ -72,11 +72,10 @@ class _PlayerRowState extends State<PlayerRow> {
                   iconSize: 30.0,
                   color: widget.isAlreadyHere ? Colors.blue : Colors.green[400],
                   onPressed: () {
+                    print(widget.user.email);
                     if (widget.isAlreadyHere) {
                       setState(() {
                         widget.isAlreadyHere = false;
-                        // usersToAdd.removeWhere((UserModel user) =>
-                        //     user.fullName == widget.user.fullName);
                         widget.userBloc.usersToRemoveStream(widget.user);
                       });
                     } else {

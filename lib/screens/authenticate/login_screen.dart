@@ -22,6 +22,18 @@ class _LoginScreenState extends State<LoginScreen> {
   String password = '';
   bool _rememberMe = false;
 
+  Text _buildPageTitle() {
+    return Text(
+      'Sign In',
+      style: TextStyle(
+        color: Colors.white,
+        fontFamily: 'OpenSans',
+        fontSize: 30.0,
+        fontWeight: FontWeight.bold,
+      ),
+    );
+  }
+
   Widget _buildEmailTF() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -285,19 +297,7 @@ class _LoginScreenState extends State<LoginScreen> {
               Container(
                 height: double.infinity,
                 width: double.infinity,
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                    colors: [
-                      Colors.green[400],
-                      Colors.green[500],
-                      Colors.green[600],
-                      Colors.green[800],
-                    ],
-                    stops: [0.1, 0.4, 0.7, 0.9],
-                  ),
-                ),
+                decoration: verticalGradient,
               ),
               Container(
                 height: double.infinity,
@@ -310,15 +310,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
-                      Text(
-                        'Sign In',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontFamily: 'OpenSans',
-                          fontSize: 30.0,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
+                      _buildPageTitle(),
                       SizedBox(height: 30.0),
                       Form(
                         key: _formKey,

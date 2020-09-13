@@ -79,13 +79,7 @@ class _AddParticipantsState extends State<AddParticipants> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: Text(
-            ADD_PARTICIPANTS,
-            style: TextStyle(
-              fontSize: 24.0,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
+          title: _buildPageTitle(),
           elevation: 0.0,
           flexibleSpace: Container(
             decoration: horizontalGradient,
@@ -102,26 +96,7 @@ class _AddParticipantsState extends State<AddParticipants> {
                     );
                   }
                   List usersToAdd = snapshot.data;
-                  return IconButton(
-                    icon: Icon(Icons.arrow_forward_ios),
-                    color: Colors.white,
-                    onPressed: usersToAdd.isEmpty
-                        ? null
-                        : () {
-                            Navigator.push(
-                              context,
-                              SlideBottomRoute(
-                                page: CreateChatRoom(
-                                  currentUser: widget.currentUser,
-                                  usersToAddToGroup: usersToAdd,
-                                  userBloc: userBloc,
-                                ),
-                              ),
-                            ).then((val) async {
-                              setState(() {});
-                            });
-                          },
-                  );
+                  return _buildMoveForwardIconButton(usersToAdd, context);
                 }),
           ],
         ),
@@ -142,16 +117,10 @@ class _AddParticipantsState extends State<AddParticipants> {
                     width: double.infinity,
                     decoration: BoxDecoration(
                       color: Colors.white,
-                      borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(30.0),
-                        topRight: Radius.circular(30.0),
-                      ),
+                      borderRadius: screenBorders,
                     ),
                     child: ClipRRect(
-                      borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(30.0),
-                        topRight: Radius.circular(30.0),
-                      ),
+                      borderRadius: screenBorders,
                       child: SearchPlayerWidget(
                         currentUser: widget.currentUser,
                         search: search,
@@ -164,5 +133,39 @@ class _AddParticipantsState extends State<AddParticipants> {
             ),
           ),
         ));
+  }
+
+  IconButton _buildMoveForwardIconButton(
+      List usersToAdd, BuildContext context) {
+    return IconButton(
+      icon: Icon(Icons.arrow_forward_ios),
+      color: Colors.white,
+      onPressed: usersToAdd.isEmpty
+          ? null
+          : () {
+              Navigator.push(
+                context,
+                SlideBottomRoute(
+                  page: CreateChatRoom(
+                    currentUser: widget.currentUser,
+                    usersToAddToGroup: usersToAdd,
+                    userBloc: userBloc,
+                  ),
+                ),
+              ).then((val) async {
+                setState(() {});
+              });
+            },
+    );
+  }
+
+  Text _buildPageTitle() {
+    return Text(
+      ADD_PARTICIPANTS,
+      style: TextStyle(
+        fontSize: 24.0,
+        fontWeight: FontWeight.bold,
+      ),
+    );
   }
 }

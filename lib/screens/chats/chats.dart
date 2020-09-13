@@ -1,11 +1,8 @@
 import 'package:au_chat/models/user_model.dart';
 import 'package:au_chat/screens/chats/add_participants.dart';
-import 'package:au_chat/screens/chats/create_chat_room.dart';
 import 'package:au_chat/screens/configurations/configurations.dart';
 import 'package:au_chat/screens/matches/add_match_info.dart';
-import 'package:au_chat/screens/matches/match.dart';
 import 'package:au_chat/screens/matches/matches.dart';
-import 'package:au_chat/services/node.dart';
 import 'package:au_chat/utilities/constants.dart';
 import 'package:au_chat/utilities/slide_bottom_route.dart';
 import 'package:au_chat/widgets/recent_chats.dart';
@@ -33,16 +30,7 @@ class _ChatsState extends State<Chats> {
   void initState() {
     super.initState();
     currentUser = widget.user;
-
-    // getCurrentUser();
   }
-
-  // Future<UserModel> getCurrentUser() async {
-  //   String firebaseId = widget.user.firebaseId;
-
-  //   UserModel currentUser = await NodeService().getUserByFirebaseId(firebaseId);
-  //   return currentUser;
-  // }
 
   Widget _buildSearchTF() {
     return Row(
@@ -85,7 +73,7 @@ class _ChatsState extends State<Chats> {
                       Icons.search,
                       color: Colors.grey,
                     ),
-                    hintText: 'Search',
+                    hintText: 'Buscar',
                     hintStyle: kHintTextStyle,
                   ),
                   onChanged: (val) {
@@ -184,19 +172,7 @@ class _ChatsState extends State<Chats> {
         ),
       ),
       body: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.centerLeft,
-            end: Alignment.centerRight,
-            colors: [
-              Colors.green[400],
-              Colors.green[500],
-              Colors.green[600],
-              Colors.green[700],
-            ],
-            stops: [0.1, 0.4, 0.7, 0.9],
-          ),
-        ),
+        decoration: horizontalGradient,
         child: _callPage(currentIndex),
       ),
       bottomNavigationBar: _buildBottomNavigationBar(),

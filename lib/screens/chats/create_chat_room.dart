@@ -1,5 +1,6 @@
 import 'package:au_chat/bloc/user_bloc.dart';
 import 'package:au_chat/models/user_model.dart';
+import 'package:au_chat/screens/chats/add_participants.dart';
 import 'package:au_chat/screens/chats/chats.dart';
 import 'package:au_chat/services/chat_room.dart';
 import 'package:au_chat/utilities/constants.dart';
@@ -61,13 +62,7 @@ class _CreateChatRoomState extends State<CreateChatRoom> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: Text(
-            CREATE_GROUP,
-            style: TextStyle(
-              fontSize: 24.0,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
+          title: _buildPageTitle(),
           elevation: 0.0,
           flexibleSpace: Container(
             decoration: horizontalGradient,
@@ -75,13 +70,17 @@ class _CreateChatRoomState extends State<CreateChatRoom> {
           actions: [
             StreamBuilder<Object>(
                 stream: widget.userBloc.usersStream,
-                builder: (context, snapshot) {
+                builder: (BuildContext context, AsyncSnapshot snapshot) {
                   bool allUsersDeleted = false;
                   if (snapshot.hasData) {
                     List<UserModel> usersStream = snapshot.data;
                     if (usersStream.isEmpty) {
                       allUsersDeleted = true;
                     }
+                  }
+                  if (allUsersDeleted) {
+                    Navigator.of(context).popUntil((route) => false);
+                    // Navigator.of(context).popUntil((route) => route.isFirst);
                   }
                   return Container(
                     padding: EdgeInsets.only(right: 20.0),
@@ -115,13 +114,6 @@ class _CreateChatRoomState extends State<CreateChatRoom> {
                             } else {
                               print('mostrar error');
                             }
-                            // if (result == null) {
-                            //   setState(() {
-                            //     loading = false;
-                            //     error =
-                            //         'Could not sign in with those credentials';
-                            //   });
-                            // }
                           }
                         },
                       ),
@@ -132,81 +124,100 @@ class _CreateChatRoomState extends State<CreateChatRoom> {
         ),
         body: Container(
           decoration: horizontalGradient,
-          child: SafeArea(
-            bottom: false,
-            child: Column(
-              children: [
-                Container(
-                  margin: EdgeInsets.only(
-                    bottom: 20.0,
-                  ),
-                  child: Container(),
-                ),
-                Expanded(
-                  child: Container(
-                    width: double.infinity,
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(30.0),
-                        topRight: Radius.circular(30.0),
-                      ),
+          child: GestureDetector(
+            onTap: () => FocusScope.of(context).unfocus(),
+            child: SafeArea(
+              bottom: false,
+              child: Column(
+                children: [
+                  Container(
+                    margin: EdgeInsets.only(
+                      bottom: 10.0,
                     ),
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(30.0),
-                        topRight: Radius.circular(30.0),
+                    child: Container(),
+                  ),
+                  Expanded(
+                    child: Container(
+                      width: double.infinity,
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(30.0),
+                          topRight: Radius.circular(30.0),
+                        ),
                       ),
-                      child: Column(
-                        children: [
-                          Container(
-                            padding: EdgeInsets.symmetric(horizontal: 20.0),
-                            child: Form(
-                              key: _formKey,
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  _buildGroupNameTF(),
-                                  SizedBox(
-                                    height: 30.0,
-                                  ),
-                                  Divider(
-                                    thickness: 3.0,
-                                  ),
-                                  SizedBox(
-                                    height: 10.0,
-                                  ),
-                                  Padding(
-                                    padding: const EdgeInsets.only(left: 20.0),
-                                    child: Text(
-                                      PARTICIPANTS,
-                                      style: TextStyle(
-                                        color: Colors.grey,
-                                        fontFamily: 'OpenSans',
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 20.0,
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(30.0),
+                          topRight: Radius.circular(30.0),
+                        ),
+                        child: SingleChildScrollView(
+                          physics: AlwaysScrollableScrollPhysics(),
+                          child: Column(
+                            children: [
+                              Container(
+                                padding: EdgeInsets.symmetric(horizontal: 20.0),
+                                child: Form(
+                                  key: _formKey,
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      _buildGroupNameTF(),
+                                      SizedBox(
+                                        height: 30.0,
                                       ),
-                                    ),
+                                      Divider(
+                                        thickness: 3.0,
+                                      ),
+                                      SizedBox(
+                                        height: 10.0,
+                                      ),
+                                      Padding(
+                                        padding:
+                                            const EdgeInsets.only(left: 20.0),
+                                        child: Text(
+                                          PARTICIPANTS,
+                                          style: TextStyle(
+                                            color: Colors.grey,
+                                            fontFamily: 'OpenSans',
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 20.0,
+                                          ),
+                                        ),
+                                      ),
+                                      SizedBox(
+                                        height: 30.0,
+                                      ),
+                                      GridViewPlayers(
+                                        usersToAddToGroup:
+                                            widget.usersToAddToGroup,
+                                        userBloc: widget.userBloc,
+                                      ),
+                                    ],
                                   ),
-                                  SizedBox(
-                                    height: 30.0,
-                                  ),
-                                  GridViewPlayers(
-                                    usersToAddToGroup: widget.usersToAddToGroup,
-                                    userBloc: widget.userBloc,
-                                  ),
-                                ],
+                                ),
                               ),
-                            ),
+                            ],
                           ),
-                        ],
+                        ),
                       ),
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ));
+  }
+
+  Text _buildPageTitle() {
+    return Text(
+      CREATE_GROUP,
+      style: TextStyle(
+        fontSize: 24.0,
+        fontWeight: FontWeight.bold,
+      ),
+    );
   }
 }

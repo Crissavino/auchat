@@ -58,6 +58,20 @@ final horizontalGradient = BoxDecoration(
   ),
 );
 
+final verticalGradient = BoxDecoration(
+  gradient: LinearGradient(
+    begin: Alignment.topCenter,
+    end: Alignment.bottomCenter,
+    colors: [
+      Colors.green[400],
+      Colors.green[500],
+      Colors.green[600],
+      Colors.green[800],
+    ],
+    stops: [0.1, 0.4, 0.7, 0.9],
+  ),
+);
+
 // constantes generales
 const CREATE = 'Crear';
 const PARTICIPANTS = 'Participantes';

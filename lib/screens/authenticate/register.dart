@@ -24,6 +24,18 @@ class _RegisterState extends State<Register> {
   String confirmPassword = '';
   bool _rememberMe = false;
 
+  Text _buildPageTitle() {
+    return Text(
+      'Sign Up',
+      style: TextStyle(
+        color: Colors.white,
+        fontFamily: 'OpenSans',
+        fontSize: 30.0,
+        fontWeight: FontWeight.bold,
+      ),
+    );
+  }
+
   Widget _buildFullNameTF() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -230,6 +242,7 @@ class _RegisterState extends State<Register> {
             setState(() => loading = true);
             dynamic result = await _auth.registerWithEmailAndPassword(
                 fullName, email, password);
+
             if (result == null) {
               setState(() {
                 loading = false;
@@ -297,19 +310,7 @@ class _RegisterState extends State<Register> {
               Container(
                 height: double.infinity,
                 width: double.infinity,
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                    colors: [
-                      Colors.green[400],
-                      Colors.green[500],
-                      Colors.green[600],
-                      Colors.green[800],
-                    ],
-                    stops: [0.1, 0.4, 0.7, 0.9],
-                  ),
-                ),
+                decoration: verticalGradient,
               ),
               Container(
                 height: double.infinity,
@@ -322,15 +323,7 @@ class _RegisterState extends State<Register> {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
-                      Text(
-                        'Sign Up',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontFamily: 'OpenSans',
-                          fontSize: 30.0,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
+                      _buildPageTitle(),
                       SizedBox(height: 30.0),
                       Form(
                         key: _formKey,
