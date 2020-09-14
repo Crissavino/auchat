@@ -210,11 +210,16 @@ class _ChatRoomState extends State<ChatRoom> {
         backgroundColor: Colors.transparent,
         // backgroundColor: Theme.of(context).primaryColor,
         appBar: AppBar(
-          title: Text(
-            widget.chatRoom.name,
-            style: TextStyle(
-              fontSize: 28.0,
-              fontWeight: FontWeight.bold,
+          title: GestureDetector(
+            onTap: () {
+              print('Info del gruoio');
+            },
+            child: Text(
+              widget.chatRoom.name,
+              style: TextStyle(
+                fontSize: 28.0,
+                fontWeight: FontWeight.bold,
+              ),
             ),
           ),
           elevation: 0.0,
@@ -258,70 +263,23 @@ class _ChatRoomState extends State<ChatRoom> {
               ),
             );
           } else if (snapshot.hasData) {
-            print('snapshot ${snapshot.data}');
-            return ListView.builder(
-              reverse: true,
-              padding: EdgeInsets.only(top: 15.0),
-              itemCount: snapshot.data.length,
-              controller: listScrollController,
-              itemBuilder: (BuildContext context, int index) =>
-                  _buildItem(index, (snapshot.data[index])),
+            return GestureDetector(
+              onTap: () => FocusScope.of(context).unfocus(),
+              child: ListView.builder(
+                reverse: true,
+                padding: EdgeInsets.only(top: 15.0),
+                itemCount: snapshot.data.length,
+                controller: listScrollController,
+                itemBuilder: (BuildContext context, int index) =>
+                    _buildItem(index, (snapshot.data[index])),
+              ),
             );
-            // return GestureDetector(
-            //   onTap: () => FocusScope.of(context).unfocus(),
-            //   child: ListView.builder(
-            //     reverse: true,
-            //     padding: EdgeInsets.only(top: 15.0),
-            //     itemCount: snapshot.data.length,
-            //     controller: listScrollController,
-            //     itemBuilder: (BuildContext context, int index) =>
-            //         _buildItem(index, (snapshot.data[index])),
-            //   ),
-            // );
           } else {
             return Center(
               child: Text("Error"),
             );
           }
         });
-  }
-
-  Widget _buildStreamBuilder2() {
-    return FutureBuilder(
-      future: ChatRoomService()
-          .getAllChatRoomMessages(widget.chatRoom.id, widget.currentUser.id),
-      builder: (BuildContext context, AsyncSnapshot futureMessage) {
-        if (!futureMessage.hasData) {
-          return Center(
-            child: CircularProgressIndicator(
-              valueColor: AlwaysStoppedAnimation<Color>(Colors.green[400]),
-            ),
-          );
-        } else {
-          print('snapshot.data1 ${futureMessage.data.length}');
-          final messages = futureMessage.data;
-
-          return StreamBuilder(
-            stream: messageBloc.messageStream,
-            initialData: messages,
-            builder: (BuildContext context, AsyncSnapshot snapshot) {
-              print('snapshot.data2 ${snapshot.data.length}');
-              return GestureDetector(
-                onTap: () => FocusScope.of(context).unfocus(),
-                child: ListView.builder(
-                  reverse: true,
-                  padding: EdgeInsets.only(top: 15.0),
-                  itemCount: snapshot.data.length,
-                  controller: listScrollController,
-                  itemBuilder: (BuildContext context, int index) =>
-                      _buildItem(index, (snapshot.data[index])),
-                ),
-              );
-            },
-          );
-        }
-      },
-    );
   }
 
   _buildItem(int index, message, {ScrollController controller}) {
