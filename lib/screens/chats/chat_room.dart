@@ -12,8 +12,9 @@ import 'package:flutter/material.dart';
 class ChatRoom extends StatefulWidget {
   final ChatRoomModel chatRoom;
   final UserModel currentUser;
+  final List<DeviceMessageModel> allMyChatRoomMessages;
 
-  ChatRoom({this.chatRoom, this.currentUser});
+  ChatRoom({this.chatRoom, this.currentUser, this.allMyChatRoomMessages});
 
   @override
   _ChatRoomState createState() => _ChatRoomState();
@@ -31,7 +32,7 @@ class _ChatRoomState extends State<ChatRoom> {
   @override
   void initState() {
     super.initState();
-
+    print(widget.allMyChatRoomMessages);
     _textController.addListener(_getLatestValue);
   }
 
@@ -247,67 +248,42 @@ class _ChatRoomState extends State<ChatRoom> {
 
   Widget _buildStreamBuilder() {
     return StreamBuilder(
-        stream: messageBloc.getMessagesStream(
-            widget.chatRoom.id, widget.currentUser),
+        stream: messageBloc.messageStream,
+        initialData: widget.allMyChatRoomMessages,
         builder: (BuildContext context, AsyncSnapshot snapshot) {
-          print(snapshot.hasData);
-
           if (!snapshot.hasData) {
             return Center(
               child: CircularProgressIndicator(
                 valueColor: AlwaysStoppedAnimation<Color>(Colors.green[400]),
               ),
             );
+          } else if (snapshot.hasData) {
+            print('snapshot ${snapshot.data}');
+            return ListView.builder(
+              reverse: true,
+              padding: EdgeInsets.only(top: 15.0),
+              itemCount: snapshot.data.length,
+              controller: listScrollController,
+              itemBuilder: (BuildContext context, int index) =>
+                  _buildItem(index, (snapshot.data[index])),
+            );
+            // return GestureDetector(
+            //   onTap: () => FocusScope.of(context).unfocus(),
+            //   child: ListView.builder(
+            //     reverse: true,
+            //     padding: EdgeInsets.only(top: 15.0),
+            //     itemCount: snapshot.data.length,
+            //     controller: listScrollController,
+            //     itemBuilder: (BuildContext context, int index) =>
+            //         _buildItem(index, (snapshot.data[index])),
+            //   ),
+            // );
           } else {
-            return GestureDetector(
-              onTap: () => FocusScope.of(context).unfocus(),
-              child: ListView.builder(
-                reverse: true,
-                padding: EdgeInsets.only(top: 15.0),
-                itemCount: snapshot.data.length,
-                controller: listScrollController,
-                itemBuilder: (BuildContext context, int index) =>
-                    _buildItem(index, (snapshot.data[index])),
-              ),
+            return Center(
+              child: Text("Error"),
             );
           }
         });
-
-    return FutureBuilder(
-      future: ChatRoomService()
-          .getAllChatRoomMessages(widget.chatRoom.id, widget.currentUser.id),
-      builder: (BuildContext context, AsyncSnapshot futureMessage) {
-        if (!futureMessage.hasData) {
-          return Center(
-            child: CircularProgressIndicator(
-              valueColor: AlwaysStoppedAnimation<Color>(Colors.green[400]),
-            ),
-          );
-        } else {
-          print('snapshot.data ${futureMessage.data.length}');
-          final messages = futureMessage.data;
-
-          return StreamBuilder(
-            stream: messageBloc.messageStream,
-            initialData: messages,
-            builder: (BuildContext context, AsyncSnapshot snapshot) {
-              print('snapshot.data ${snapshot.data.length}');
-              return GestureDetector(
-                onTap: () => FocusScope.of(context).unfocus(),
-                child: ListView.builder(
-                  reverse: true,
-                  padding: EdgeInsets.only(top: 15.0),
-                  itemCount: snapshot.data.length,
-                  controller: listScrollController,
-                  itemBuilder: (BuildContext context, int index) =>
-                      _buildItem(index, (snapshot.data[index])),
-                ),
-              );
-            },
-          );
-        }
-      },
-    );
   }
 
   Widget _buildStreamBuilder2() {
@@ -322,14 +298,14 @@ class _ChatRoomState extends State<ChatRoom> {
             ),
           );
         } else {
-          print('snapshot.data ${futureMessage.data.length}');
+          print('snapshot.data1 ${futureMessage.data.length}');
           final messages = futureMessage.data;
 
           return StreamBuilder(
             stream: messageBloc.messageStream,
             initialData: messages,
             builder: (BuildContext context, AsyncSnapshot snapshot) {
-              print('snapshot.data ${snapshot.data.length}');
+              print('snapshot.data2 ${snapshot.data.length}');
               return GestureDetector(
                 onTap: () => FocusScope.of(context).unfocus(),
                 child: ListView.builder(

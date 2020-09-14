@@ -1,10 +1,5 @@
 import 'dart:async';
-import 'package:au_chat/models/chat_room_model.dart';
-import 'package:au_chat/models/device_message_model.dart';
-import 'package:au_chat/models/message_model.dart';
 import 'package:au_chat/models/user_model.dart';
-import 'package:au_chat/services/chat_room.dart';
-import 'package:au_chat/services/node.dart';
 
 class UserBloc {
   List<UserModel> usersToAddToGroup = List();

@@ -1,11 +1,11 @@
 import 'dart:async';
+import 'dart:math';
 import 'package:au_chat/models/chat_room_model.dart';
 import 'package:au_chat/models/device_message_model.dart';
 import 'package:au_chat/models/message_model.dart';
 import 'package:au_chat/models/user_model.dart';
 import 'package:au_chat/providers/message_provider.dart';
 import 'package:au_chat/services/chat_room.dart';
-import 'package:au_chat/services/node.dart';
 
 class MessageBloc {
   static MessageBloc _singleton;
@@ -23,13 +23,25 @@ class MessageBloc {
   final _messageController =
       StreamController<List<DeviceMessageModel>>.broadcast();
 
+  final _randomController = StreamController<double>.broadcast();
+
   Stream<List<DeviceMessageModel>> get messageStream =>
       _messageController.stream;
 
   Stream<List<DeviceMessageModel>> getMessagesStream(
       String chatRoomId, UserModel currentUser) async* {
-    yield await ChatRoomService()
+    final messages = await ChatRoomService()
         .getAllChatRoomMessages(chatRoomId, currentUser.id);
+    yield messages;
+  }
+
+  Stream<double> getRandomValues() async* {
+    var random = Random(2);
+    while (true) {
+      await Future.delayed(Duration(seconds: 1));
+      // yield random.nextDouble();
+      _randomController.add(random.nextDouble());
+    }
   }
 
   // final _messageController = StreamController<DeviceMessageModel>.broadcast();
@@ -60,7 +72,8 @@ class MessageBloc {
 
   addMessage(MessageModel message, UserModel currentUser) async {
     await MessageProvider().newMessage(message, currentUser);
-    getMessages(message.chatRoom.id, currentUser);
-    getAllMyChatRooms(currentUser.firebaseId);
+    // getMessagesStream(message.chatRoom.id, currentUser);
+    await getMessages(message.chatRoom.id, currentUser);
+    // getAllMyChatRooms(currentUser.firebaseId);
   }
 }

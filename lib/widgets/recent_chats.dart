@@ -1,5 +1,6 @@
 import 'package:au_chat/bloc/message_bloc.dart';
 import 'package:au_chat/models/chat_room_model.dart';
+import 'package:au_chat/models/device_message_model.dart';
 import 'package:au_chat/models/user_model.dart';
 import 'package:au_chat/screens/chats/chat_room.dart';
 import 'package:au_chat/services/chat_room.dart';
@@ -70,19 +71,26 @@ class _RecentChatsState extends State<RecentChats> {
 
   GestureDetector _buildChatRoomRow(BuildContext context, ChatRoomModel chat) {
     return GestureDetector(
-      onTap: () => Navigator.push(
-        context,
-        SlideBottomRoute(
-          page: ChatRoom(
-            chatRoom: chat,
-            currentUser: widget.user,
+      onTap: () async {
+        final List<DeviceMessageModel> allMyChatRoomMessage =
+            await chatRoomService.getAllChatRoomMessages(
+                chat.id, widget.user.id);
+
+        Navigator.push(
+          context,
+          SlideBottomRoute(
+            page: ChatRoom(
+              chatRoom: chat,
+              currentUser: widget.user,
+              allMyChatRoomMessages: allMyChatRoomMessage,
+            ),
           ),
-        ),
-      ).then(
-        (val) async {
-          setState(() {});
-        },
-      ),
+        ).then(
+          (val) async {
+            setState(() {});
+          },
+        );
+      },
       child: Container(
         margin:
             EdgeInsets.only(top: 10.0, bottom: 2.0, right: 10.0, left: 10.0),
