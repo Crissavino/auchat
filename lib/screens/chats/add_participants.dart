@@ -125,6 +125,7 @@ class _AddParticipantsState extends State<AddParticipants> {
                         currentUser: widget.currentUser,
                         search: search,
                         userBloc: userBloc,
+                        addPlayerToNewGroup: true,
                       ),
                     ),
                   ),

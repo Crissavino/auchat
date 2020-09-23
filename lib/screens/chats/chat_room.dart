@@ -1,11 +1,14 @@
 import 'package:au_chat/bloc/message_bloc.dart';
+import 'package:au_chat/bloc/user_bloc.dart';
 import 'package:au_chat/models/chat_room_model.dart';
 import 'package:au_chat/models/device_message_model.dart';
 import 'package:au_chat/models/message_model.dart';
 import 'package:au_chat/models/user_model.dart';
+import 'package:au_chat/screens/chats/chat_info.dart';
 import 'package:au_chat/screens/chats/search_player.dart';
 import 'package:au_chat/services/chat_room.dart';
 import 'package:au_chat/utilities/constants.dart';
+import 'package:au_chat/utilities/slide_bottom_route.dart';
 import 'package:au_chat/widgets/fade_in_message.dart';
 import 'package:flutter/material.dart';
 
@@ -32,7 +35,6 @@ class _ChatRoomState extends State<ChatRoom> {
   @override
   void initState() {
     super.initState();
-    print(widget.allMyChatRoomMessages);
     _textController.addListener(_getLatestValue);
   }
 
@@ -50,7 +52,208 @@ class _ChatRoomState extends State<ChatRoom> {
     });
   }
 
-  _buildMessage(dynamic message, bool isMe) {
+  PopupMenuButton<String> _buildPopupMenu() {
+    return PopupMenuButton<String>(
+      offset: Offset(0, 100),
+      onSelected: choiceAction,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(15.0),
+      ),
+      icon: Icon(
+        Icons.add_circle_outline,
+        size: 30.0,
+      ),
+      padding: EdgeInsets.only(
+        right: 10.0,
+      ),
+      itemBuilder: (BuildContext context) {
+        return chatRoomMenuChoices.map((String choice) {
+          return PopupMenuItem(
+            value: choice,
+            child: Text(choice),
+          );
+        }).toList();
+      },
+    );
+  }
+
+  void choiceAction(String choice) async {
+    if (choice == ADD_PLAYER) {
+      Navigator.push(
+        context,
+        SlideBottomRoute(
+          page: SearchPlayer(
+            chatRooom: widget.chatRoom,
+            currentUser: widget.currentUser,
+          ),
+        ),
+      ).then(
+        (val) async {
+          setState(() {});
+        },
+      );
+    } else if (choice == CREATE_GAME) {
+      print('Tocaste create partido');
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: horizontalGradient,
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        // backgroundColor: Theme.of(context).primaryColor,
+        appBar: AppBar(
+          title: _openChatInfo(context),
+          elevation: 0.0,
+          flexibleSpace: Container(
+            decoration: horizontalGradient,
+          ),
+          actions: <Widget>[
+            _buildPopupMenu(),
+          ],
+        ),
+        body: Column(
+          children: <Widget>[
+            Expanded(
+              child: Container(
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: screenBorders,
+                ),
+                child: ClipRRect(
+                  borderRadius: screenBorders,
+                  child: _buildStreamBuilder(),
+                ),
+              ),
+            ),
+            _buildMessageComposer(),
+          ],
+        ),
+      ),
+    );
+  }
+
+  GestureDetector _openChatInfo(BuildContext context) {
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(
+          context,
+          SlideBottomRoute(
+            page: InfoChat(
+              chatRoom: widget.chatRoom,
+            ),
+          ),
+        ).then(
+          (val) async {
+            setState(() {});
+          },
+        );
+      },
+      child: Text(
+        widget.chatRoom.name,
+        style: TextStyle(
+          fontSize: 28.0,
+          fontWeight: FontWeight.bold,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildMessageComposer() {
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 8.0),
+      height: 70.0,
+      color: Colors.white,
+      child: Row(
+        children: <Widget>[
+          // IconButton(
+          //   icon: Icon(Icons.photo),
+          //   iconSize: 25.0,
+          //   color: Colors.green[400],
+          //   onPressed: () {},
+          // ),
+          SizedBox(
+            width: 25.0,
+          ),
+          Expanded(
+            child: TextField(
+              controller: _textController,
+              textCapitalization: TextCapitalization.sentences,
+              decoration: InputDecoration.collapsed(
+                hintText: 'Send a message...',
+              ),
+            ),
+          ),
+          IconButton(
+            icon: Icon(Icons.send),
+            iconSize: 25.0,
+            color: Colors.green[400],
+            onPressed: () {
+              bool blank = textMessage?.trim()?.isEmpty ?? true;
+              if (!blank) {
+                final message = MessageModel();
+                message.sender = widget.currentUser;
+                message.time = DateTime.now().toIso8601String();
+                message.text = textMessage;
+                message.isLiked = false;
+                message.unread = false;
+                message.language = 'es';
+                message.chatRoom = widget.chatRoom;
+
+                messageBloc.addMessage(message, widget.currentUser);
+                if (listScrollController.hasClients) {
+                  listScrollController.animateTo(
+                    0.0,
+                    duration: Duration(seconds: 5),
+                    curve: Curves.easeIn,
+                  );
+                }
+
+                _textController.clear();
+              } else {
+                // Fluttertoast.showToast(msg: 'Nothing to send');
+              }
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildStreamBuilder() {
+    return StreamBuilder(
+        stream: messageBloc.messageStream,
+        initialData: widget.allMyChatRoomMessages,
+        builder: (BuildContext context, AsyncSnapshot snapshot) {
+          if (!snapshot.hasData) {
+            return Center(
+              child: CircularProgressIndicator(
+                valueColor: AlwaysStoppedAnimation<Color>(Colors.green[400]),
+              ),
+            );
+          } else if (snapshot.hasData) {
+            return GestureDetector(
+              onTap: () => FocusScope.of(context).unfocus(),
+              child: ListView.builder(
+                reverse: true,
+                padding: EdgeInsets.only(top: 15.0),
+                itemCount: snapshot.data.length,
+                controller: listScrollController,
+                itemBuilder: (BuildContext context, int index) =>
+                    _buildItem(index, (snapshot.data[index])),
+              ),
+            );
+          } else {
+            return Center(
+              child: Text("Error"),
+            );
+          }
+        });
+  }
+
+  Widget _buildMessage(dynamic message, bool isMe) {
     final Container msg = Container(
       margin: isMe
           ? EdgeInsets.only(
@@ -124,165 +327,7 @@ class _ChatRoomState extends State<ChatRoom> {
     );
   }
 
-  _buildMessageComposer() {
-    return Container(
-      padding: EdgeInsets.symmetric(horizontal: 8.0),
-      height: 70.0,
-      color: Colors.white,
-      child: Row(
-        children: <Widget>[
-          // IconButton(
-          //   icon: Icon(Icons.photo),
-          //   iconSize: 25.0,
-          //   color: Colors.green[400],
-          //   onPressed: () {},
-          // ),
-          SizedBox(
-            width: 25.0,
-          ),
-          Expanded(
-            child: TextField(
-              controller: _textController,
-              textCapitalization: TextCapitalization.sentences,
-              decoration: InputDecoration.collapsed(
-                hintText: 'Send a message...',
-              ),
-            ),
-          ),
-          IconButton(
-            icon: Icon(Icons.send),
-            iconSize: 25.0,
-            color: Colors.green[400],
-            onPressed: () {
-              bool blank = textMessage?.trim()?.isEmpty ?? true;
-              if (!blank) {
-                final message = MessageModel();
-                message.sender = widget.currentUser;
-                message.time = DateTime.now().toIso8601String();
-                message.text = textMessage;
-                message.isLiked = false;
-                message.unread = false;
-                message.language = 'es';
-                message.chatRoom = widget.chatRoom;
-
-                messageBloc.addMessage(message, widget.currentUser);
-                if (listScrollController.hasClients) {
-                  listScrollController.animateTo(
-                    0.0,
-                    duration: Duration(seconds: 5),
-                    curve: Curves.easeIn,
-                  );
-                }
-
-                _textController.clear();
-              } else {
-                // Fluttertoast.showToast(msg: 'Nothing to send');
-              }
-            },
-          ),
-        ],
-      ),
-    );
-  }
-
-  void choiceAction(String choice) async {
-    if (choice == ADD_PLAYER) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (_) => SearchPlayer(chatRooom: widget.chatRoom),
-        ),
-      ).then((val) async {
-        setState(() {});
-      });
-    } else if (choice == CREATE_GAME) {
-      print('Tocaste create partido');
-    } else if (choice == LEAVE_GROUP) {
-      print('Tocaste irte?');
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      decoration: horizontalGradient,
-      child: Scaffold(
-        backgroundColor: Colors.transparent,
-        // backgroundColor: Theme.of(context).primaryColor,
-        appBar: AppBar(
-          title: GestureDetector(
-            onTap: () {
-              print('Info del gruoio');
-            },
-            child: Text(
-              widget.chatRoom.name,
-              style: TextStyle(
-                fontSize: 28.0,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ),
-          elevation: 0.0,
-          flexibleSpace: Container(
-            decoration: horizontalGradient,
-          ),
-          actions: <Widget>[
-            _buildPopupMenu(),
-          ],
-        ),
-        body: Column(
-          children: <Widget>[
-            Expanded(
-              child: Container(
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: screenBorders,
-                ),
-                child: ClipRRect(
-                  borderRadius: screenBorders,
-                  child: _buildStreamBuilder(),
-                ),
-              ),
-            ),
-            _buildMessageComposer(),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildStreamBuilder() {
-    return StreamBuilder(
-        stream: messageBloc.messageStream,
-        initialData: widget.allMyChatRoomMessages,
-        builder: (BuildContext context, AsyncSnapshot snapshot) {
-          if (!snapshot.hasData) {
-            return Center(
-              child: CircularProgressIndicator(
-                valueColor: AlwaysStoppedAnimation<Color>(Colors.green[400]),
-              ),
-            );
-          } else if (snapshot.hasData) {
-            return GestureDetector(
-              onTap: () => FocusScope.of(context).unfocus(),
-              child: ListView.builder(
-                reverse: true,
-                padding: EdgeInsets.only(top: 15.0),
-                itemCount: snapshot.data.length,
-                controller: listScrollController,
-                itemBuilder: (BuildContext context, int index) =>
-                    _buildItem(index, (snapshot.data[index])),
-              ),
-            );
-          } else {
-            return Center(
-              child: Text("Error"),
-            );
-          }
-        });
-  }
-
-  _buildItem(int index, message, {ScrollController controller}) {
+  Widget _buildItem(int index, message, {ScrollController controller}) {
     if (!(message is String)) {
       final bool isMe =
           message.sender['firebaseId'] == widget.currentUser.firebaseId;
@@ -293,26 +338,5 @@ class _ChatRoomState extends State<ChatRoom> {
         child: Text(''),
       );
     }
-  }
-
-  PopupMenuButton<String> _buildPopupMenu() {
-    return PopupMenuButton<String>(
-      onSelected: choiceAction,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(15.0),
-      ),
-      icon: Icon(Icons.more_horiz),
-      padding: EdgeInsets.only(
-        right: 10.0,
-      ),
-      itemBuilder: (BuildContext context) {
-        return chatRoomMenuChoices.map((String choice) {
-          return PopupMenuItem(
-            value: choice,
-            child: Text(choice),
-          );
-        }).toList();
-      },
-    );
   }
 }

@@ -94,7 +94,6 @@ const DELETE_MATCH = 'Eliminar partido';
 final List<String> chatRoomMenuChoices = <String>[
   ADD_PLAYER,
   CREATE_GAME,
-  LEAVE_GROUP
 ];
 
 final List<String> matchMenuChoices = <String>[

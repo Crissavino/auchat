@@ -8,8 +8,6 @@ class UserBloc {
 
   Stream<List<UserModel>> get usersStream => _usersController.stream;
 
-  // Function(List<UserModel>) get usersToAddSink => _usersController.sink.add;
-
   dispose() {
     _usersController?.close();
   }

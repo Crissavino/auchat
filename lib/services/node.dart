@@ -22,15 +22,6 @@ class NodeService {
       users.add(user);
     });
     return users;
-
-    // decodedData.forEach((id, product) {
-    //   final prodTemp = ProductModel.fromJson(product);
-    //   prodTemp.id = id;
-
-    //   products.add(prodTemp);
-    // });
-
-    // return products;
   }
 
   Future<UserModel> createUser(

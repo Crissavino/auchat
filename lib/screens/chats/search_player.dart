@@ -1,3 +1,4 @@
+import 'package:au_chat/bloc/user_bloc.dart';
 import 'package:au_chat/models/chat_room_model.dart';
 import 'package:au_chat/models/user_model.dart';
 import 'package:au_chat/utilities/constants.dart';
@@ -7,7 +8,12 @@ import 'package:flutter/material.dart';
 // ignore: must_be_immutable
 class SearchPlayer extends StatefulWidget {
   ChatRoomModel chatRooom;
-  SearchPlayer({Key key, this.chatRooom}) : super(key: key);
+  UserModel currentUser;
+  SearchPlayer({
+    Key key,
+    this.chatRooom,
+    this.currentUser,
+  }) : super(key: key);
 
   @override
   _SearchPlayerState createState() => _SearchPlayerState();
@@ -15,6 +21,15 @@ class SearchPlayer extends StatefulWidget {
 
 class _SearchPlayerState extends State<SearchPlayer> {
   dynamic search = '';
+  UserBloc userBloc;
+  List<UserModel> users;
+
+  @override
+  void initState() {
+    super.initState();
+    userBloc = UserBloc();
+  }
+
   Widget _buildSearchTF() {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
@@ -112,8 +127,10 @@ class _SearchPlayerState extends State<SearchPlayer> {
                         child: SearchPlayerWidget(
                           chatRooom: widget.chatRooom,
                           search: search,
+                          currentUser: widget.currentUser,
+                          userBloc: userBloc,
+                          addPlayerToGroup: true,
                         ),
-                        // child: _buildPlayersList(),
                       ),
                     ),
                   )
