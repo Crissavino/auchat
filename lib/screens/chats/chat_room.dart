@@ -13,7 +13,7 @@ import 'package:au_chat/widgets/fade_in_message.dart';
 import 'package:flutter/material.dart';
 
 class ChatRoom extends StatefulWidget {
-  final ChatRoomModel chatRoom;
+  ChatRoomModel chatRoom;
   final UserModel currentUser;
   final List<DeviceMessageModel> allMyChatRoomMessages;
 
@@ -147,7 +147,10 @@ class _ChatRoomState extends State<ChatRoom> {
           ),
         ).then(
           (val) async {
-            setState(() {});
+            print(val);
+            setState(() {
+              widget.chatRoom = val;
+            });
           },
         );
       },

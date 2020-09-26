@@ -66,4 +66,64 @@ class ChatRoomPrivider {
 
     return true;
   }
+
+  Future<dynamic> editGroupName(
+      ChatRoomModel chatRoom, String newChatRoomName) async {
+    final url = '$_url/editGroupName?apiKey=$_apiKey';
+
+    final data = <String, dynamic>{
+      'chatRoomToEdit': chatRoom,
+      'newChatRoomName': newChatRoomName
+    };
+
+    final resp = await http.post(
+      url,
+      headers: {"Content-Type": "application/json"},
+      body: json.encode(data),
+    );
+
+    final decodedData = json.decode(resp.body);
+
+    if (decodedData['response']['success'] != true) return false;
+
+    ChatRoomModel chatRoomUpdated =
+        ChatRoomModel.fromJson(decodedData['response']['chatRoom']);
+
+    final response = {
+      'success': decodedData['response']['success'],
+      'chatRoom': chatRoomUpdated
+    };
+
+    return response;
+  }
+
+  Future<dynamic> editGroupDescription(
+      ChatRoomModel chatRoom, String newChatRoomDesc) async {
+    final url = '$_url/editGroupDescription?apiKey=$_apiKey';
+
+    final data = <String, dynamic>{
+      'chatRoomToEdit': chatRoom,
+      'newChatRoomDesc': newChatRoomDesc
+    };
+
+    final resp = await http.post(
+      url,
+      headers: {"Content-Type": "application/json"},
+      body: json.encode(data),
+    );
+
+    final decodedData = json.decode(resp.body);
+
+    if (decodedData['response']['success'] != true) return false;
+
+    ChatRoomModel chatRoomUpdated =
+        ChatRoomModel.fromJson(decodedData['response']['chatRoom']);
+
+    final response = {
+      'success': decodedData['response']['success'],
+      'chatRoom': chatRoomUpdated
+    };
+
+    return response;
+  }
 }
