@@ -18,7 +18,7 @@ class MessageBloc {
     return _singleton;
   }
 
-  MessageBloc._internal() {}
+  MessageBloc._internal();
 
   final _messageController =
       StreamController<List<DeviceMessageModel>>.broadcast();

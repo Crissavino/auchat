@@ -2,12 +2,14 @@ import 'package:au_chat/bloc/chat_room_bloc.dart';
 import 'package:au_chat/bloc/user_bloc.dart';
 import 'package:au_chat/models/chat_room_model.dart';
 import 'package:au_chat/models/user_model.dart';
+import 'package:au_chat/utilities/constants.dart';
 import 'package:flutter/material.dart';
 // export 'package:au_chat/widgets/player_row.dart';
 
 // List<UserModel> usersToAdd = List();
 // List<UserModel> usersToAdd = List();
 
+// ignore: must_be_immutable
 class PlayerRow extends StatefulWidget {
   UserModel user;
   bool isAlreadyHere;
@@ -61,7 +63,7 @@ class _PlayerRowState extends State<PlayerRow> {
         builder: (BuildContext context, AsyncSnapshot snapshot) {
           if (!snapshot.hasData) {
             return Center(
-              child: CircularProgressIndicator(),
+              child: circularLoading,
             );
           }
           List<UserModel> usersToAdd = List();

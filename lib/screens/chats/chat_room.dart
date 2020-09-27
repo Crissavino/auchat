@@ -1,17 +1,15 @@
 import 'package:au_chat/bloc/message_bloc.dart';
-import 'package:au_chat/bloc/user_bloc.dart';
 import 'package:au_chat/models/chat_room_model.dart';
 import 'package:au_chat/models/device_message_model.dart';
 import 'package:au_chat/models/message_model.dart';
 import 'package:au_chat/models/user_model.dart';
 import 'package:au_chat/screens/chats/chat_info.dart';
 import 'package:au_chat/screens/chats/search_player.dart';
-import 'package:au_chat/services/chat_room.dart';
 import 'package:au_chat/utilities/constants.dart';
 import 'package:au_chat/utilities/slide_bottom_route.dart';
-import 'package:au_chat/widgets/fade_in_message.dart';
 import 'package:flutter/material.dart';
 
+// ignore: must_be_immutable
 class ChatRoom extends StatefulWidget {
   ChatRoomModel chatRoom;
   final UserModel currentUser;
@@ -232,9 +230,7 @@ class _ChatRoomState extends State<ChatRoom> {
         builder: (BuildContext context, AsyncSnapshot snapshot) {
           if (!snapshot.hasData) {
             return Center(
-              child: CircularProgressIndicator(
-                valueColor: AlwaysStoppedAnimation<Color>(Colors.green[400]),
-              ),
+              child: circularLoading,
             );
           } else if (snapshot.hasData) {
             return GestureDetector(
@@ -330,7 +326,7 @@ class _ChatRoomState extends State<ChatRoom> {
     );
   }
 
-  Widget _buildItem(int index, message, {ScrollController controller}) {
+  Widget _buildItem(int index, message) {
     if (!(message is String)) {
       final bool isMe =
           message.sender['firebaseId'] == widget.currentUser.firebaseId;

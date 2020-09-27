@@ -1,9 +1,13 @@
+import 'dart:io';
+
 import 'package:au_chat/models/chat_room_model.dart';
 import 'package:au_chat/utilities/constants.dart';
 import 'package:au_chat/utilities/slide_bottom_route.dart';
 import 'package:au_chat/widgets/edit_text.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 
+// ignore: must_be_immutable
 class InfoChat extends StatefulWidget {
   ChatRoomModel chatRoom;
 
@@ -14,6 +18,21 @@ class InfoChat extends StatefulWidget {
 }
 
 class _InfoChatState extends State<InfoChat> {
+  File _groupImage;
+  final picker = ImagePicker();
+
+  Future getImage() async {
+    final pickedFile = await picker.getImage(source: ImageSource.camera);
+
+    setState(() {
+      if (pickedFile != null) {
+        _groupImage = File(pickedFile.path);
+      } else {
+        print('No image selected.');
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final mediaQuery = MediaQuery.of(context);
@@ -117,7 +136,7 @@ class _InfoChatState extends State<InfoChat> {
                       mini: true,
                       child: IconButton(
                         icon: Icon(Icons.edit),
-                        onPressed: () => print('Editar imagen'),
+                        onPressed: () => getImage,
                         color: Colors.white,
                       ),
                     ),
@@ -144,9 +163,11 @@ class _InfoChatState extends State<InfoChat> {
           ),
         ).then(
           (val) async {
-            setState(() {
-              widget.chatRoom = val;
-            });
+            if (val != null) {
+              setState(() {
+                widget.chatRoom = val;
+              });
+            }
           },
         );
       },
@@ -175,9 +196,11 @@ class _InfoChatState extends State<InfoChat> {
             ),
           ),
         ).then((val) async {
-          setState(() {
-            widget.chatRoom = val;
-          });
+          if (val != null) {
+            setState(() {
+              widget.chatRoom = val;
+            });
+          }
         });
       },
       child: Container(

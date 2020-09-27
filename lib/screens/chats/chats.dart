@@ -3,6 +3,7 @@ import 'package:au_chat/screens/chats/add_participants.dart';
 import 'package:au_chat/screens/configurations/configurations.dart';
 import 'package:au_chat/screens/matches/add_match_info.dart';
 import 'package:au_chat/screens/matches/matches.dart';
+import 'package:au_chat/services/node.dart';
 import 'package:au_chat/utilities/constants.dart';
 import 'package:au_chat/utilities/slide_bottom_route.dart';
 import 'package:au_chat/widgets/recent_chats.dart';
@@ -11,10 +12,10 @@ import 'package:flutter/material.dart';
 
 class Chats extends StatefulWidget {
   static final String routeName = 'chats';
-  final UserModel user;
+  final String userFirebaseId;
   Chats({
     Key key,
-    @required this.user,
+    @required this.userFirebaseId,
   }) : super(key: key);
 
   @override
@@ -26,10 +27,13 @@ class _ChatsState extends State<Chats> {
   dynamic search = '';
   int currentIndex = 0;
 
+  Future<UserModel> initUser() async {
+    return await NodeService().getUserByFirebaseId(widget.userFirebaseId);
+  }
+
   @override
   void initState() {
     super.initState();
-    currentUser = widget.user;
   }
 
   Widget _buildSearchTF() {
@@ -115,8 +119,22 @@ class _ChatsState extends State<Chats> {
               });
             },
           ),
-        )
+        ),
       ],
+    );
+  }
+
+  Widget userFutureBuilder(Widget widgetToReturn) {
+    return FutureBuilder(
+      future: initUser(),
+      builder: (BuildContext context, AsyncSnapshot<UserModel> snapshot) {
+        if (!snapshot.hasData) {
+          return Container();
+        } else {
+          currentUser = snapshot.data;
+          return widgetToReturn;
+        }
+      },
     );
   }
 
@@ -151,73 +169,88 @@ class _ChatsState extends State<Chats> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        elevation: 0.0,
-        flexibleSpace: Container(
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.centerLeft,
-              end: Alignment.centerRight,
-              colors: [
-                Colors.green[400],
-                Colors.green[500],
-                Colors.green[600],
-                Colors.green[700],
-              ],
-              stops: [0.1, 0.4, 0.7, 0.9],
+    return userFutureBuilder(
+      Scaffold(
+        appBar: AppBar(
+          elevation: 0.0,
+          flexibleSpace: Container(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.centerLeft,
+                end: Alignment.centerRight,
+                colors: [
+                  Colors.green[400],
+                  Colors.green[500],
+                  Colors.green[600],
+                  Colors.green[700],
+                ],
+                stops: [0.1, 0.4, 0.7, 0.9],
+              ),
             ),
+            child: _buildSearchTF(),
           ),
-          child: _buildSearchTF(),
         ),
+        body: Container(
+          decoration: horizontalGradient,
+          child: _callPage(currentIndex),
+        ),
+        bottomNavigationBar: _buildBottomNavigationBar(),
       ),
-      body: Container(
-        decoration: horizontalGradient,
-        child: _callPage(currentIndex),
-      ),
-      bottomNavigationBar: _buildBottomNavigationBar(),
     );
   }
 
   Widget _callPage(int paginaActual) {
-    switch (paginaActual) {
-      case 0:
-        return SafeArea(
-          child: Column(
-            children: [
-              UpcomingMatches(),
-              RecentChats(user: currentUser),
-            ],
-          ),
-        );
-      case 1:
-        return SafeArea(
-          child: Column(
-            children: [
-              Matches(user: currentUser),
-            ],
-          ),
-        );
-        break;
-      case 2:
-        return SafeArea(
-          child: Column(
-            children: [
-              Configurations(user: currentUser),
-            ],
-          ),
-        );
-        break;
-      default:
-        return SafeArea(
-          child: Column(
-            children: [
-              UpcomingMatches(),
-              RecentChats(user: currentUser),
-            ],
-          ),
-        );
-    }
+    return FutureBuilder(
+      future: initUser(),
+      builder: (BuildContext context, AsyncSnapshot<UserModel> snapshot) {
+        if (!snapshot.hasData) {
+          return Container(
+            child: Center(
+              child: circularLoading,
+            ),
+          );
+        } else {
+          switch (paginaActual) {
+            case 0:
+              return SafeArea(
+                child: Column(
+                  children: [
+                    UpcomingMatches(),
+                    RecentChats(user: currentUser),
+                  ],
+                ),
+              );
+            case 1:
+              return SafeArea(
+                child: Column(
+                  children: [
+                    Matches(user: currentUser),
+                  ],
+                ),
+              );
+              break;
+            case 2:
+              return SafeArea(
+                child: Column(
+                  children: [
+                    Configurations(user: currentUser),
+                  ],
+                ),
+              );
+              break;
+            default:
+              return SafeArea(
+                child: Column(
+                  children: [
+                    UpcomingMatches(),
+                    RecentChats(user: currentUser),
+                  ],
+                ),
+              );
+          }
+        }
+      },
+    );
   }
 
   Widget _buildBottomNavigationBar() {

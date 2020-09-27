@@ -240,15 +240,15 @@ class _RegisterState extends State<Register> {
         onPressed: () async {
           if (_formKey.currentState.validate()) {
             setState(() => loading = true);
-            dynamic result = await _auth.registerWithEmailAndPassword(
-                fullName, email, password);
-
-            if (result == null) {
-              setState(() {
-                loading = false;
-                error = 'Could not sign up with those credentials';
-              });
-            }
+            await _auth.registerWithEmailAndPassword(fullName, email, password);
+            // dynamic result = await _auth.registerWithEmailAndPassword(
+            //     fullName, email, password);
+            // if (result == null) {
+            //   setState(() {
+            //     loading = false;
+            //     error = 'Could not sign up with those credentials';
+            //   });
+            // }
           }
         },
         padding: EdgeInsets.all(15.0),

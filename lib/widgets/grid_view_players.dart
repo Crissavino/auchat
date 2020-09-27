@@ -1,7 +1,9 @@
 import 'package:au_chat/bloc/user_bloc.dart';
 import 'package:au_chat/models/user_model.dart';
+import 'package:au_chat/utilities/constants.dart';
 import 'package:flutter/material.dart';
 
+// ignore: must_be_immutable
 class GridViewPlayers extends StatefulWidget {
   List<UserModel> usersToAddToGroup;
   final UserBloc userBloc;
@@ -25,7 +27,7 @@ class _GridViewPlayersState extends State<GridViewPlayers> {
             builder: (context, snapshot) {
               if (!snapshot.hasData) {
                 return Center(
-                  child: CircularProgressIndicator(),
+                  child: circularLoading,
                 );
               }
 

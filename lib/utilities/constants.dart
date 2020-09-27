@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
-// const NGROK_HTTP = 'https://f4cbcbaba509.ngrok.io';
+// const NGROK_HTTP = 'https://4186ef62e043.ngrok.io';
 const NGROK_HTTP = 'http://localhost:4000';
-// ngrok hhtp 4000
+// ngrok http 4000
 
 final kHintTextStyle = TextStyle(
   color: Colors.grey,
@@ -70,6 +70,10 @@ final verticalGradient = BoxDecoration(
     ],
     stops: [0.1, 0.4, 0.7, 0.9],
   ),
+);
+
+final circularLoading = CircularProgressIndicator(
+  valueColor: AlwaysStoppedAnimation<Color>(Colors.green[400]),
 );
 
 // constantes generales

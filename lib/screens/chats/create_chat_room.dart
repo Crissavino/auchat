@@ -1,6 +1,5 @@
 import 'package:au_chat/bloc/user_bloc.dart';
 import 'package:au_chat/models/user_model.dart';
-import 'package:au_chat/screens/chats/add_participants.dart';
 import 'package:au_chat/screens/chats/chats.dart';
 import 'package:au_chat/services/chat_room.dart';
 import 'package:au_chat/utilities/constants.dart';
@@ -79,7 +78,8 @@ class _CreateChatRoomState extends State<CreateChatRoom> {
                     }
                   }
                   if (allUsersDeleted) {
-                    Navigator.of(context).popUntil((route) => false);
+                    Navigator.of(context).pop();
+                    // Navigator.of(context).popUntil((route) => false);
                     // Navigator.of(context).popUntil((route) => route.isFirst);
                   }
                   return Container(
@@ -100,17 +100,14 @@ class _CreateChatRoomState extends State<CreateChatRoom> {
                                 .createChatRoom(widget.currentUser, groupName,
                                     widget.usersToAddToGroup);
                             if (result) {
-                              Navigator.of(context)
-                                  .pushAndRemoveUntil(
-                                      MaterialPageRoute(
-                                        builder: (_) => Chats(
-                                          user: widget.currentUser,
-                                        ),
-                                      ),
-                                      (route) => false)
-                                  .then((val) async {
-                                setState(() {});
-                              });
+                              Navigator.of(context).pushAndRemoveUntil(
+                                  MaterialPageRoute(
+                                    builder: (_) => Chats(
+                                      userFirebaseId:
+                                          widget.currentUser.firebaseId,
+                                    ),
+                                  ),
+                                  (route) => false);
                             } else {
                               print('mostrar error');
                             }

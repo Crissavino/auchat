@@ -1,8 +1,3 @@
-import 'dart:math';
-
-import 'package:au_chat/models/user_model.dart';
-import 'package:au_chat/screens/chats/search_player.dart';
-import 'package:au_chat/services/node.dart';
 import 'package:au_chat/utilities/constants.dart';
 import 'package:flutter/material.dart';
 
@@ -69,7 +64,7 @@ class _MatchState extends State<Match> {
 
   void choiceAction(String choice) async {
     if (choice == ADD_PLAYER) {
-      List<UserModel> allUsers = await NodeService().getAllUsers();
+      // List<UserModel> allUsers = await NodeService().getAllUsers();
       // Navigator.push(
       //   context,
       //   MaterialPageRoute(

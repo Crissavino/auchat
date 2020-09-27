@@ -4,6 +4,7 @@ import 'package:au_chat/models/device_message_model.dart';
 import 'package:au_chat/models/user_model.dart';
 import 'package:au_chat/screens/chats/chat_room.dart';
 import 'package:au_chat/services/chat_room.dart';
+import 'package:au_chat/utilities/constants.dart';
 import 'package:au_chat/utilities/slide_bottom_route.dart';
 import 'package:flutter/material.dart';
 
@@ -62,7 +63,7 @@ class _RecentChatsState extends State<RecentChats> {
           );
         } else {
           return Center(
-            child: CircularProgressIndicator(),
+            child: circularLoading,
           );
         }
       },

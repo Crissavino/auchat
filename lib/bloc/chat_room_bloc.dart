@@ -2,7 +2,6 @@ import 'dart:async';
 import 'package:au_chat/models/chat_room_model.dart';
 import 'package:au_chat/models/user_model.dart';
 import 'package:au_chat/providers/chat_room_provider.dart';
-import 'package:au_chat/providers/users_provider.dart';
 
 class ChatRoomBloc {
   static ChatRoomBloc _singleton = ChatRoomBloc._internal();
@@ -16,7 +15,7 @@ class ChatRoomBloc {
     return _singleton;
   }
 
-  ChatRoomBloc._internal() {}
+  ChatRoomBloc._internal();
 
   final _chatRoomController = StreamController<List<ChatRoomModel>>.broadcast();
 

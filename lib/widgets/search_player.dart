@@ -3,9 +3,11 @@ import 'package:au_chat/models/chat_room_model.dart';
 import 'package:au_chat/models/user_model.dart';
 import 'package:au_chat/screens/chats/add_participants.dart';
 import 'package:au_chat/services/node.dart';
+import 'package:au_chat/utilities/constants.dart';
 import 'package:au_chat/widgets/player_row.dart';
 import 'package:flutter/material.dart';
 
+// ignore: must_be_immutable
 class SearchPlayerWidget extends StatefulWidget {
   UserModel currentUser;
   ChatRoomModel chatRooom;
@@ -56,7 +58,7 @@ class _SearchPlayerWidgetState extends State<SearchPlayerWidget> {
             builder: (BuildContext context, AsyncSnapshot snapshot) {
               if (!snapshot.hasData) {
                 return Center(
-                  child: CircularProgressIndicator(),
+                  child: circularLoading,
                 );
               }
               List userResults;

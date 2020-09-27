@@ -4,6 +4,7 @@ import 'package:au_chat/models/chat_room_model.dart';
 import 'package:au_chat/models/user_model.dart';
 import 'package:au_chat/screens/chats/chat_room.dart';
 import 'package:au_chat/services/chat_room.dart';
+import 'package:au_chat/utilities/constants.dart';
 import 'package:flutter/material.dart';
 
 class Matches extends StatelessWidget {
@@ -49,7 +50,7 @@ class Matches extends StatelessWidget {
           );
         } else {
           return Center(
-            child: CircularProgressIndicator(),
+            child: circularLoading,
           );
         }
       },

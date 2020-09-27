@@ -9,14 +9,19 @@ class FadeInMessage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final tween = MultiTrackTween([
+    // ignore: deprecated_member_use
+    var multiTrackTween = MultiTrackTween([
+      // ignore: deprecated_member_use
       Track("opacity")
           .add(Duration(milliseconds: 500), Tween(begin: 0.0, end: 1.0)),
+      // ignore: deprecated_member_use
       Track("translateX").add(
           Duration(milliseconds: 500), Tween(begin: 130.0, end: 0.0),
           curve: Curves.easeIn)
     ]);
+    final tween = multiTrackTween;
 
+    // ignore: deprecated_member_use
     return ControlledAnimation(
       delay: Duration(milliseconds: (300 * delay).round()),
       duration: tween.duration,

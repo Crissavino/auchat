@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 import 'package:au_chat/models/chat_room_model.dart';
 import 'package:au_chat/models/user_model.dart';
 import 'package:au_chat/utilities/constants.dart';
@@ -104,6 +105,37 @@ class ChatRoomPrivider {
     final data = <String, dynamic>{
       'chatRoomToEdit': chatRoom,
       'newChatRoomDesc': newChatRoomDesc
+    };
+
+    final resp = await http.post(
+      url,
+      headers: {"Content-Type": "application/json"},
+      body: json.encode(data),
+    );
+
+    final decodedData = json.decode(resp.body);
+
+    if (decodedData['response']['success'] != true) return false;
+
+    ChatRoomModel chatRoomUpdated =
+        ChatRoomModel.fromJson(decodedData['response']['chatRoom']);
+
+    final response = {
+      'success': decodedData['response']['success'],
+      'chatRoom': chatRoomUpdated
+    };
+
+    return response;
+  }
+
+  Future<dynamic> editGroupImage(
+      ChatRoomModel chatRoom, File groupImage) async {
+    final url = '$_url/editGroupImage?apiKey=$_apiKey';
+
+    String encodedImage = base64Encode(groupImage.readAsBytesSync());
+    final data = <String, dynamic>{
+      'chatRoomToEdit': chatRoom,
+      'encodedImage': encodedImage
     };
 
     final resp = await http.post(

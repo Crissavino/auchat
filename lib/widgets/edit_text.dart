@@ -3,6 +3,7 @@ import 'package:au_chat/providers/chat_room_provider.dart';
 import 'package:au_chat/utilities/constants.dart';
 import 'package:flutter/material.dart';
 
+// ignore: must_be_immutable
 class EditText extends StatefulWidget {
   ChatRoomModel chatRoom;
   String groupName;
